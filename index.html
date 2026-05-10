@@ -1898,30 +1898,8 @@
     text-decoration: underline;
   }
 
-  /* Theme toggle button */
-  .theme-toggle {
-    position: fixed;
-    top: 14px;
-    left: 14px;
-    background: white;
-    color: var(--sea-darker);
-    border: 1.5px solid var(--sand);
-    padding: 8px 14px;
-    border-radius: 999px;
-    cursor: pointer;
-    font-size: 0.85rem;
-    font-weight: 600;
-    z-index: 50;
-    box-shadow: var(--shadow-sm);
-    font-family: inherit;
-    transition: all 0.2s;
-  }
-  .theme-toggle:hover {
-    background: var(--sky-pale);
-    border-color: var(--sea-deep);
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-md);
-  }
+  /* Theme toggle button — removed/hidden, site uses theme-pro by default */
+  .theme-toggle { display: none !important; }
 
   /* ===================== Professional Theme Override =====================
      Activated by adding "theme-pro" class to body.
@@ -2146,7 +2124,7 @@
   }
 </style>
 </head>
-<body>
+<body class="theme-pro">
 <a href="#mainContent" class="skip-link">דלג לתוכן הראשי</a>
 
 <div class="app">
@@ -2380,7 +2358,7 @@
   </div>
   <div class="footer-attribution">
     <strong>קרדיט נתונים:</strong>
-    תחזיות גלים ורוח: <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a> (CC-BY 4.0) • מודלים: ECMWF IFS, ICON-EU, GFS, GEM • תצפיות מדידה: <a href="https://isramar.ocean.org.il/" target="_blank" rel="noopener">ISRAMAR / IOLR</a>
+    תחזיות גלים ורוח: <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a> (CC-BY 4.0) • מודלים: ECMWF IFS, ICON-EU, GFS, GEM
   </div>
   <span id="lastUpdate"></span>
   <div class="footer-tagline">
@@ -2418,10 +2396,7 @@
 
 </div>
 
-<!-- Theme toggle button -->
-<button class="theme-toggle" id="themeToggle" title="החלפת מראה האפליקציה">
-  <span class="theme-toggle-text">🎨 מראה מקצועי</span>
-</button>
+<!-- Theme toggle removed — site is fixed in professional mode -->
 
 <!-- Admin button (hidden, revealed via ?admin=1) -->
 <button class="admin-button" id="adminButton" hidden title="פאנל ניהול">⚙️</button>
@@ -2779,8 +2754,8 @@ const SPORTS = {
   surf: {
     name: 'גלישת גלים',
     icon: '<svg viewBox="0 0 24 24" style="width:1.2em;height:1.2em;vertical-align:middle;fill:currentColor;display:inline-block"><path d="M12 2 C 14 5, 15 9, 15 14 C 15 18, 14 21, 12 22 C 10 21, 9 18, 9 14 C 9 9, 10 5, 12 2 Z"/></svg>',
-    desc: 'תלוי בגלים נקיים. תקופת גל ארוכה + רוח גבית = פנינה.',
-    methodology: 'גלישת גלים דורשת קודם כל גל איכותי. <b>תקופת הגל</b> (35%) - הכי חשוב כי תקופה ארוכה (Ground Swell) זה גל נקי שהגיע מסערה רחוקה, ותקופה קצרה זה wind chop מבולגן. <b>גובה הגל</b> (30%) - גודל מתאים. <b>כיוון הרוח</b> (25%) - רוח גבית (Offshore) שומרת על צורת הגל, פנימית מקלקלת. <b>מהירות רוח</b> (10%) - העיקר שלא יותר מדי.',
+    desc: 'דורש סוויל מסודר. סוויל ארוך + רוח Offshore = תנאים אידיאליים.',
+    methodology: 'גלישת גלים דורשת סוויל איכותי. <b>תקופת הגל (Period)</b> (35%) - המדד החשוב ביותר. תקופה ארוכה = Ground Swell שהגיע מסערה רחוקה, תקופה קצרה = Wind Swell מקומי בלתי-מסודר. <b>גובה הגל</b> (30%) - גודל אופטימלי. <b>כיוון הרוח</b> (25%) - רוח Offshore (גבית) שומרת על צורת הגל, רוח Onshore (פנימית) מקלקלת. <b>מהירות רוח</b> (10%) - עדיף שתהיה חלשה.',
     factors: {
       period: {
         weight: 35, label: 'תקופת גלים',
@@ -2860,8 +2835,8 @@ const SPORTS = {
   kite: {
     name: 'קייטסרפינג',
     icon: '<svg viewBox="0 0 24 24" style="width:1.2em;height:1.2em;vertical-align:middle;fill:currentColor;display:inline-block"><path d="M3 10 C 5 4, 19 4, 21 10 L 19 12 C 17 10, 7 10, 5 12 Z"/><line x1="8" y1="11" x2="11" y2="19" stroke="currentColor" stroke-width="1"/><line x1="16" y1="11" x2="13" y2="19" stroke="currentColor" stroke-width="1"/><line x1="9" y1="19" x2="15" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
-    desc: 'רוח חזקה ויציבה. רוח גבית = סכנה אמיתית.',
-    methodology: 'בקייט שני שיקולים: שלא תיחנק (רוח לא מספיקה) ושלא תיסחף (רוח מהיבשה). <b>מהירות רוח</b> (40%) - 15-22 קשר זה הסוויט-ספוט. <b>כיוון רוח</b> (35%) - <b>רוח גבית = סכנת חיים</b>, ולכן ציון 0. פלגית או פלגית-פנימית = מושלם. <b>יציבות רוח</b> (15%) - יחס משבים לרוח קבועה. רוח שזזה מ-12 ל-25 קשר = סיוט. <b>גובה גל</b> (10%) - לא קריטי, גלים קטנים אפילו עוזרים לאוויר.',
+    desc: 'דורש רוח חזקה ויציבה. רוח Offshore = סכנת היסחפות לים פתוח.',
+    methodology: 'בקייטסרפינג שני שיקולים: שלא יהיה Underpowered (אם הרוח לא מספיקה) ושלא תיסחף (אם רוח Offshore). <b>מהירות רוח</b> (40%) - 15-22 קשר הם הטווח האידיאלי. <b>כיוון רוח</b> (35%) - <b>רוח Offshore = סכנת חיים</b>, ולכן ציון 0. Sideshore או Side-Onshore = מושלם. <b>יציבות רוח</b> (15%) - יחס Gusts/Average. רוח שמשתנה מ-12 ל-25 קשר מקשה מאוד. <b>גובה גל</b> (10%) - לא קריטי, גלים קטנים אפילו מסייעים לקפיצות (Boost).',
     factors: {
       windSpeed: {
         weight: 40, label: 'מהירות רוח',
@@ -2942,8 +2917,8 @@ const SPORTS = {
   windsurf: {
     name: 'גלישת רוח',
     icon: '<svg viewBox="0 0 24 24" style="width:1.2em;height:1.2em;vertical-align:middle;fill:currentColor;display:inline-block"><path d="M 11 3 L 11 18 L 21 17 Z"/><line x1="11" y1="3" x2="11" y2="20" stroke="currentColor" stroke-width="1.5"/><path d="M 3 21 Q 12 19, 21 21" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>',
-    desc: 'דורש רוח 14-25 קשר יציבה. רוח גבית פחות מסוכנת מבקייט.',
-    methodology: 'גלישת רוח דורשת קודם כל רוח. <b>מהירות רוח</b> (50%) - 14-25 קשר הסוויט ספוט. <b>כיוון רוח</b> (25%) - פלגית/פלגית-פנימית = הכי טוב. רוח גבית עובדת למתקדמים, פנימית מקשה על החזרה. <b>יציבות רוח</b> (15%) - גוסטים מקשים על תפעול המפרש. <b>גלים</b> (10%) - לפי סגנון: freeride לא צריך, wave-sailing צריך.',
+    desc: 'דורש 14-25 קשר רוח יציבה. רוח Offshore פחות מסוכנת מקייטסרפינג.',
+    methodology: 'גלישת רוח דורשת קודם כל רוח. <b>מהירות רוח</b> (50%) - 14-25 קשר הם הטווח האידיאלי. <b>כיוון רוח</b> (25%) - Sideshore או Side-Onshore הכי טוב. רוח Offshore עובדת רק למתקדמים, Onshore מקשה על Upwind חזרה לחוף. <b>יציבות רוח</b> (15%) - Gusts מקשים על תפעול המפרש. <b>גלים</b> (10%) - תלוי בסגנון: Freeride לא צריך גלים, Wave-Sailing דורש Side-Offshore עם סוויל.',
     factors: {
       windSpeed: {
         weight: 50, label: 'מהירות רוח',
@@ -2959,9 +2934,9 @@ const SPORTS = {
           const w = c.windSpeed; if (w == null) return '—';
           const v = `${fmt(w, 0)} kn`;
           if (w < 10) return `${v} • חלש`;
-          if (w < 14) return `${v} • סוסים בינוניים`;
+          if (w < 14) return `${v} • רוח בינונית`;
           if (w <= 25) return `${v} • אופטימלי 🎯`;
-          if (w <= 32) return `${v} • חזק (קטן את המפרש)`;
+          if (w <= 32) return `${v} • חזק (החלף למפרש קטן)`;
           return `${v} • סוער מדי`;
         }
       },
@@ -3012,8 +2987,8 @@ const SPORTS = {
   wing: {
     name: 'וינג פויל',
     icon: '<svg viewBox="0 0 24 24" style="width:1.2em;height:1.2em;vertical-align:middle;fill:currentColor;display:inline-block"><path d="M2 13 Q 6 5, 12 5 Q 18 5, 22 13 Q 18 10, 12 10 Q 6 10, 2 13 Z"/></svg>',
-    desc: 'הפויל מאפשר תפעול ברוח בינונית. סוסים קטנים מספיקים.',
-    methodology: 'וינג פויל יותר סובלני מקייט/וינדסרף בזכות הפויל. <b>מהירות רוח</b> (50%) - 12-22 קשר אידיאלי. <b>כיוון רוח</b> (30%) - פלגית/פנימית הכי טוב, גבית מסוכן. <b>יציבות רוח</b> (15%) - גוסטים פחות קריטיים בגלל הפויל. <b>גלים</b> (5%) - הפויל מנטרל את המים, ולכן פחות חשוב.',
+    desc: 'הפויל מאפשר Foiling ברוח בינונית. אפילו 10-12 קשר מספיקים.',
+    methodology: 'Wing Foiling סובלני יותר מקייט/וינדסרף בזכות הפויל. <b>מהירות רוח</b> (50%) - 12-22 קשר אידיאלי, אך גם 10 קשר מאפשר Take-Off עם פויל גדול. <b>כיוון רוח</b> (30%) - Sideshore או Onshore הכי טוב, Offshore = סכנת היסחפות. <b>יציבות רוח</b> (15%) - Gusts פחות קריטיים בגלל מומנטום הפויל. <b>גלים</b> (5%) - הפויל מנטרל chop ו-bumps, ולכן פחות חשוב.',
     factors: {
       windSpeed: {
         weight: 50, label: 'מהירות רוח',
@@ -3078,8 +3053,8 @@ const SPORTS = {
   sup: {
     name: 'סאפ (SUP)',
     icon: '<svg viewBox="0 0 24 24" style="width:1.2em;height:1.2em;vertical-align:middle;fill:currentColor;display:inline-block"><ellipse cx="9" cy="13" rx="3.5" ry="10"/><line x1="15.5" y1="3" x2="18.5" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="17" y1="3" x2="17" y2="18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M 15 18 Q 17 22, 19 18 Z"/></svg>',
-    desc: 'אוהב ים שטוח ורוח חלשה. רוח מעל 12 קשר = סכנה.',
-    methodology: 'בסאפ רוח חלשה זה הכל. <b>מהירות רוח</b> (50%) - מתחת ל-8 קשר אופטימלי, מעל 12 כבר מסוכן. <b>גובה גל</b> (30%) - שטוח (פחות מ-0.3 מטר) טוב לסאפ קלאסי. גלים גדולים = רק לסאפ-סרפינג. <b>כיוון רוח</b> (20%) - פנימית עדיפה (לא תיסחפו לים), גבית = סכנה.',
+    desc: 'דורש Flat Water ורוח חלשה. מעל 12 קשר = סכנת היסחפות.',
+    methodology: 'בסאפ רוח חלשה זה הכל. <b>מהירות רוח</b> (50%) - פחות מ-8 קשר אופטימלי, מעל 12 קשר כבר מסוכן. <b>גובה גל</b> (30%) - Flat Water (פחות מ-0.3 מטר) ל-Touring/Yoga. גלים גדולים מתאימים רק ל-SUP Surfing. <b>כיוון רוח</b> (20%) - Onshore עדיפה (לא תיסחפו לים פתוח), Offshore = סכנה.',
     factors: {
       windSpeed: {
         weight: 50, label: 'מהירות רוח',
@@ -3112,7 +3087,7 @@ const SPORTS = {
         explain: c => {
           const h = c.waveHeight; if (h == null) return '—';
           const v = `${fmt(h)}m`;
-          if (h <= 0.3) return `${v} • שמן זית 🤙`;
+          if (h <= 0.3) return `${v} • ים שטוח (אידיאלי) 🤙`;
           if (h <= 0.7) return `${v} • סביר`;
           if (h <= 1.2) return `${v} • למיומנים`;
           return `${v} • מסוכן`;
@@ -3379,6 +3354,8 @@ function buildSportSelector() {
         const beach = BEACHES.find(b => b.id === selectedBeachId);
         renderBeachInfo(beach);
       }
+      // Scroll back to top so user sees the updated map / sidebar
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
     sel.appendChild(btn);
   });
@@ -3899,8 +3876,6 @@ async function renderBeachInfo(beach) {
 
     ${renderCameraSection(beach)}
 
-    ${renderBuoySection(beach)}
-
     <h3 class="section-title">תחזית 7 ימים — ציון ל${sport.name}</h3>
     <div class="forecast" id="forecastRow">
   `;
@@ -4167,11 +4142,11 @@ function describeWind(kn) {
 function describeWave(m) {
   if (m == null) return '—';
   if (m < 0.3) return 'ים שטוח';
-  if (m < 0.6) return 'גלי גלים זעירים';
+  if (m < 0.6) return 'גלים זעירים';
   if (m < 1.0) return 'גלים קטנים';
   if (m < 1.5) return 'גלים בינוניים';
   if (m < 2.2) return 'גלים גדולים';
-  if (m < 3.0) return 'גלים גבוהים';
+  if (m < 3.0) return 'גלים גבוהים מאוד';
   return 'גלים מסוכנים';
 }
 function describePeriod(s) {
@@ -4660,6 +4635,8 @@ function runMatchSearch() {
         renderTopBeaches();
       }
       onBeachSelect(beach);
+      // After closing the matcher and selecting a beach, return user to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   });
 }
@@ -5583,29 +5560,10 @@ function setupCookieBanner() {
    18. Theme toggle - switch between Beach (default) and Pro
    ========================================================= */
 function setupThemeToggle() {
-  const btn = document.getElementById('themeToggle');
-  const text = btn.querySelector('.theme-toggle-text');
-
-  // Default is now Professional. User can opt back to Beach.
-  const saved = localStorage.getItem('seaforecast-theme');
-  let isProMode = (saved !== 'beach'); // default = pro, only beach if explicitly chosen
-
-  if (isProMode) {
-    document.body.classList.add('theme-pro');
-    text.textContent = '🌊 מראה חופי';
-  } else {
-    text.textContent = '👔 מראה מקצועי';
-  }
-
-  btn.addEventListener('click', () => {
-    isProMode = !isProMode;
-    document.body.classList.toggle('theme-pro', isProMode);
-    text.textContent = isProMode ? '🌊 מראה חופי' : '👔 מראה מקצועי';
-    trackEvent('theme_change', { theme: isProMode ? 'pro' : 'beach' });
-    try {
-      localStorage.setItem('seaforecast-theme', isProMode ? 'pro' : 'beach');
-    } catch (e) { /* localStorage not available */ }
-  });
+  // Theme toggle was removed — site is fixed in professional mode (theme-pro).
+  // The body element already has the .theme-pro class set in HTML, so no
+  // runtime work is needed. Function kept for backward-compat in case future
+  // code re-introduces a theme toggle.
 }
 
 /* =========================================================
@@ -5625,6 +5583,47 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
+// =========================================================
+// Tooltip auto-hide on touch / scroll / outside-click
+// On mobile, mouseleave often doesn't fire reliably, so the
+// tooltip can remain stuck on screen. These handlers ensure
+// it disappears when the user scrolls or taps elsewhere.
+// =========================================================
+const TOOLTIP_INTERACTIVE_SELECTOR = '.beach-dot, .buoy-marker, .day, [data-id], #tooltip';
+
+function isInteractiveTarget(el) {
+  return el && el.closest && el.closest(TOOLTIP_INTERACTIVE_SELECTOR);
+}
+
+// Hide tooltip when user scrolls (very common on mobile)
+document.addEventListener('scroll', () => {
+  hoveredBeachId = null;
+  hideTooltip();
+}, { passive: true, capture: true });
+
+// Hide tooltip when user taps/clicks outside an interactive element
+document.addEventListener('click', (e) => {
+  if (!isInteractiveTarget(e.target)) {
+    hoveredBeachId = null;
+    hideTooltip();
+  }
+});
+
+// On touch devices: auto-hide after 5 seconds even if no other event fires
+let touchTooltipTimeout = null;
+document.addEventListener('touchend', (e) => {
+  clearTimeout(touchTooltipTimeout);
+  if (isInteractiveTarget(e.target)) {
+    touchTooltipTimeout = setTimeout(() => {
+      hoveredBeachId = null;
+      hideTooltip();
+    }, 5000);
+  } else {
+    hoveredBeachId = null;
+    hideTooltip();
+  }
+}, { passive: true });
+
 // Auto-update copyright year
 const copyYearEl = document.getElementById('copyYear');
 if (copyYearEl) copyYearEl.textContent = new Date().getFullYear();
@@ -5635,7 +5634,7 @@ trackEvent('page_view', { url: window.location.pathname });
 setupThemeToggle();
 buildSportSelector();
 buildMap();
-buildBuoys();
+// buildBuoys() removed — buoy links removed per user request
 setupMatchFinder();
 setupGlossary();
 setupSourcesModal();
