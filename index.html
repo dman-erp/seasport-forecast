@@ -5049,7 +5049,7 @@ function setupAdminPanel() {
   // localStorage — that prevents curious visitors who saw ?admin=... once
   // from continuing to see the admin button. Replace ADMIN_SECRET below
   // with a long random string before deploying.
-  const ADMIN_SECRET = 'change-me-to-a-long-random-string-before-deploying';
+  const ADMIN_SECRET = 'a8328f782fde2ecdb4f674ec831021fe305041ce939251e5';
   const urlParams = new URLSearchParams(window.location.search);
   const adminMode = urlParams.get('admin') === ADMIN_SECRET;
 
