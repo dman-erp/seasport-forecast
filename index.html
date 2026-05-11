@@ -1383,6 +1383,57 @@
     font-weight: 900 !important;
   }
 
+  /* === Current state metrics — V3 enhanced === */
+  .current-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)) !important;
+    gap: 12px !important;
+    margin-bottom: 24px !important;
+  }
+  .current-grid .metric {
+    background: white !important;
+    border: 1px solid rgba(15, 76, 92, 0.1) !important;
+    border-radius: 14px !important;
+    padding: 14px 12px !important;
+    text-align: center !important;
+    transition: all 0.2s !important;
+    position: relative;
+  }
+  .current-grid .metric:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(15, 76, 92, 0.08);
+    border-color: rgba(31, 111, 139, 0.3) !important;
+  }
+  .current-grid .metric .m-icon {
+    font-size: 1.4rem;
+    margin-bottom: 6px;
+    line-height: 1;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.05));
+  }
+  .current-grid .metric .label {
+    font-family: 'Heebo', sans-serif !important;
+    font-size: 0.78rem !important;
+    color: var(--ink-soft, #475569) !important;
+    margin-bottom: 4px !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    font-weight: 500 !important;
+  }
+  .current-grid .metric .val {
+    font-family: 'Rubik', sans-serif !important;
+    font-size: 1.5rem !important;
+    font-weight: 800 !important;
+    color: #0F4C5C !important;
+    line-height: 1.1;
+  }
+  .current-grid .metric .unit {
+    font-size: 0.72rem !important;
+    color: var(--ink-soft, #475569) !important;
+    margin-right: 3px !important;
+    font-weight: 400 !important;
+    font-family: 'Heebo', sans-serif !important;
+  }
+
   /* === Compass cards === */
   .compass-card {
     background: linear-gradient(135deg, white, rgba(127, 200, 224, 0.05)) !important;
@@ -5378,6 +5429,12 @@ async function onBeachSelect(beach) {
   renderTopBeaches();
   trackEvent('beach_selected', { beach_id: beach.id, beach_name: beach.name, sport: currentSport });
   await renderBeachInfo(beach);
+  // After data renders, scroll smoothly to the info panel so user sees the
+  // full forecast (especially important on mobile where it's below the map)
+  setTimeout(() => {
+    const panel = document.getElementById('infoPanel');
+    if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
 }
 
 async function renderBeachInfo(beach) {
@@ -5461,12 +5518,12 @@ async function renderBeachInfo(beach) {
 
     <h3 class="section-title">מצב נוכחי</h3>
     <div class="current-grid">
-      <div class="metric"><div class="label">גובה גלים</div><div class="val">${fmt(c.waveHeight)}<span class="unit">מ׳</span></div></div>
-      <div class="metric"><div class="label">תקופת גלים</div><div class="val">${fmt(c.wavePeriod, 0)}<span class="unit">שנ׳</span></div></div>
-      <div class="metric"><div class="label">רוח</div><div class="val">${fmt(c.windSpeed, 0)}<span class="unit">קשר</span></div></div>
-      <div class="metric"><div class="label">משבי רוח</div><div class="val">${fmt(c.windGusts, 0)}<span class="unit">קשר</span></div></div>
-      <div class="metric"><div class="label">טמפ׳ ים</div><div class="val">${fmt(c.seaTemp)}<span class="unit">°C</span></div></div>
-      <div class="metric"><div class="label">טמפ׳ אוויר</div><div class="val">${fmt(c.airTemp, 0)}<span class="unit">°C</span></div></div>
+      <div class="metric"><div class="m-icon">🌊</div><div class="label">גובה גלים</div><div class="val">${fmt(c.waveHeight)}<span class="unit">מ׳</span></div></div>
+      <div class="metric"><div class="m-icon">⏱️</div><div class="label">תקופת גלים</div><div class="val">${fmt(c.wavePeriod, 0)}<span class="unit">שנ׳</span></div></div>
+      <div class="metric"><div class="m-icon">💨</div><div class="label">מהירות רוח</div><div class="val">${fmt(c.windSpeed, 0)}<span class="unit">קשר</span></div></div>
+      <div class="metric"><div class="m-icon">🌪️</div><div class="label">משבי רוח</div><div class="val">${fmt(c.windGusts, 0)}<span class="unit">קשר</span></div></div>
+      <div class="metric"><div class="m-icon">🌡️</div><div class="label">טמפ׳ מים</div><div class="val">${fmt(c.seaTemp)}<span class="unit">°C</span></div></div>
+      <div class="metric"><div class="m-icon">☀️</div><div class="label">טמפ׳ אוויר</div><div class="val">${fmt(c.airTemp, 0)}<span class="unit">°C</span></div></div>
     </div>
 
     <div class="compass-row">
