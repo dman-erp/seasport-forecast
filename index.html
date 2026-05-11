@@ -11,8 +11,13 @@
 <meta property="og:description" content="כי כל סשן מתחיל בבחירה הנכונה. תחזית ים בעברית לחופי ישראל." />
 <meta property="og:locale" content="he_IL" />
 <meta name="twitter:card" content="summary" />
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://*.google-analytics.com https://pagead2.googlesyndication.com; connect-src 'self' https://api.open-meteo.com https://marine-api.open-meteo.com https://*.google-analytics.com https://*.googletagmanager.com; frame-src https://www.youtube.com https://*.skylinewebcams.com https://*.windy.com;" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src 'self' https://fonts.gstatic.com; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://*.google-analytics.com https://pagead2.googlesyndication.com https://unpkg.com; connect-src 'self' https://api.open-meteo.com https://marine-api.open-meteo.com https://*.google-analytics.com https://*.googletagmanager.com https://*.basemaps.cartocdn.com; frame-src https://www.youtube.com https://*.skylinewebcams.com https://*.windy.com;" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🌊%3C/text%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&family=Rubik:wght@500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <title>תחזית ים - חופי ישראל 🌊</title>
 <style>
   /* ===================== Theme: Sea & Sand ===================== */
@@ -303,6 +308,1376 @@
     color: var(--sea-deep);
     direction: ltr;
     word-break: break-all;
+  }
+
+  /* ============================================================
+     V3 — Dramatic redesign overrides
+     Beautiful gradients, glassmorphism, Rubik/Heebo fonts,
+     hero section, animated waves, modern card system.
+     ============================================================ */
+
+  html, body {
+    font-family: 'Heebo', 'Rubik', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  }
+  body, body.theme-pro {
+    background:
+      radial-gradient(ellipse at top right, rgba(127, 200, 224, 0.25) 0%, transparent 60%),
+      radial-gradient(ellipse at bottom left, rgba(232, 181, 71, 0.15) 0%, transparent 60%),
+      linear-gradient(180deg, #F0F9FC 0%, #FAFCFD 50%, #FBF6E8 100%) !important;
+    min-height: 100vh;
+  }
+  body::before { display: none !important; }
+
+  /* ============================================================
+     V3 ✨ CINEMATIC HERO — animated ocean scene with sun, clouds,
+     parallax waves, surfer silhouette, sparkles
+     ============================================================ */
+  .hero {
+    position: relative;
+    margin: -24px -20px 40px;
+    padding: 80px 24px 220px;
+    color: white;
+    overflow: hidden;
+    border-radius: 0 0 32px 32px;
+    min-height: 720px;
+    isolation: isolate;
+  }
+
+  .hero-scene {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: inherit;
+    z-index: -1;
+  }
+
+  /* === Sky gradient — dynamic by time of day === */
+  .sky {
+    position: absolute;
+    inset: 0;
+    transition: background 2s ease;
+  }
+
+  /* DAWN (05:00-07:00) — pink/violet sunrise */
+  .hero[data-time="dawn"] .sky {
+    background:
+      radial-gradient(ellipse 700px 500px at 25% 50%, rgba(255, 180, 200, 0.6) 0%, transparent 60%),
+      radial-gradient(ellipse 500px 350px at 30% 45%, rgba(255, 215, 180, 0.5) 0%, transparent 50%),
+      linear-gradient(180deg, #2C2456 0%, #5B4485 18%, #B66E84 38%, #E8949A 58%, #F4B788 78%, #FAD9A8 100%);
+  }
+  /* MORNING (07:00-11:00) — bright blue sky */
+  .hero[data-time="morning"] .sky {
+    background:
+      radial-gradient(ellipse 700px 500px at 25% 30%, rgba(255, 240, 180, 0.5) 0%, transparent 60%),
+      linear-gradient(180deg, #4A9BC7 0%, #6FB5D9 25%, #A3D2E8 55%, #D8EBF2 85%, #F0F8FC 100%);
+  }
+  /* DAY (11:00-16:00) — vivid azure */
+  .hero[data-time="day"] .sky {
+    background:
+      radial-gradient(ellipse 600px 400px at 50% 20%, rgba(255, 255, 220, 0.45) 0%, transparent 55%),
+      linear-gradient(180deg, #2D7FB8 0%, #4A9BC7 28%, #7AB8DE 58%, #B5DBED 85%, #E0F1F8 100%);
+  }
+  /* SUNSET (16:00-19:00) — golden hour (the original) */
+  .hero[data-time="sunset"] .sky {
+    background:
+      radial-gradient(ellipse 800px 600px at 75% 40%, rgba(255, 180, 90, 0.65) 0%, transparent 60%),
+      radial-gradient(ellipse 600px 400px at 80% 35%, rgba(255, 220, 140, 0.4) 0%, transparent 50%),
+      linear-gradient(180deg, #1A2747 0%, #2C3E66 18%, #5C6B8E 35%, #C97862 60%, #E8A57A 75%, #F5C396 88%, #FFD4A6 100%);
+  }
+  /* NIGHT (19:00-05:00) — deep navy with moon glow */
+  .hero[data-time="night"] .sky {
+    background:
+      radial-gradient(ellipse 500px 400px at 78% 32%, rgba(230, 240, 255, 0.35) 0%, transparent 60%),
+      radial-gradient(ellipse 400px 300px at 82% 28%, rgba(200, 220, 255, 0.2) 0%, transparent 50%),
+      linear-gradient(180deg, #050A1F 0%, #0B1840 25%, #1A2860 55%, #2A3870 78%, #353F75 100%);
+  }
+
+  /* SUN / MOON — switch by time === */
+  .hero[data-time="night"] .sun {
+    background: radial-gradient(circle at 35% 30%, #FFFFFF, #E8EFFA 60%, #B5C5E0 100%);
+    box-shadow:
+      0 0 50px rgba(220, 230, 255, 0.7),
+      0 0 100px rgba(180, 200, 240, 0.4);
+  }
+  .hero[data-time="night"] .sun-rays { opacity: 0.15; }
+  .hero[data-time="dawn"] .sun {
+    background: radial-gradient(circle at 30% 30%, #FFE8D0, #FFB57A 60%, #E87654 100%);
+  }
+  .hero[data-time="dawn"] .sun-wrapper { right: 70%; top: 35%; }
+  .hero[data-time="morning"] .sun-wrapper { right: 55%; top: 22%; }
+  .hero[data-time="day"] .sun-wrapper { right: 45%; top: 12%; width: 80px; height: 80px; }
+  .hero[data-time="day"] .sun {
+    background: radial-gradient(circle at 30% 30%, #FFFEF0, #FFE680 60%, #FFB540 100%);
+    box-shadow: 0 0 80px rgba(255, 220, 120, 0.9), 0 0 160px rgba(255, 180, 80, 0.5);
+  }
+  .hero[data-time="night"] .sun-wrapper { right: 22%; top: 22%; }
+
+  /* SPARKLES — only visible at dawn/night === */
+  .hero[data-time="morning"] .sparkle,
+  .hero[data-time="day"] .sparkle { display: none; }
+  .hero[data-time="night"] .sparkle {
+    box-shadow: 0 0 12px white, 0 0 24px rgba(255,255,255,0.8);
+    animation-duration: 4s;
+  }
+
+  /* CLOUDS — adjust opacity per time === */
+  .hero[data-time="night"] .cloud { opacity: 0.2; filter: blur(2px); }
+  .hero[data-time="morning"] .cloud { opacity: 0.85; }
+  .hero[data-time="day"] .cloud { opacity: 0.9; }
+
+  /* WAVE COLORS — adjust per time === */
+  .hero[data-time="night"] .wave-back path { fill: rgba(20, 30, 60, 0.7); }
+  .hero[data-time="night"] .wave-mid path { fill: rgba(10, 20, 45, 0.85); }
+  .hero[data-time="night"] .wave-front path { fill: #050A1F; }
+  .hero[data-time="day"] .wave-back path { fill: rgba(70, 145, 190, 0.6); }
+  .hero[data-time="day"] .wave-mid path { fill: rgba(35, 95, 145, 0.85); }
+  .hero[data-time="day"] .wave-front path { fill: #1A4870; }
+
+  /* SPORT-SPECIFIC silhouettes === */
+  .silhouette {
+    position: absolute;
+    bottom: 50px;
+    left: 18%;
+    z-index: 1;
+    animation: surferBob 3s ease-in-out infinite;
+  }
+  /* Hide all silhouettes by default, show only the active sport */
+  .silhouette { display: none; }
+  .hero[data-sport="surf"] .silhouette-surf,
+  .hero[data-sport="kite"] .silhouette-kite,
+  .hero[data-sport="windsurf"] .silhouette-windsurf,
+  .hero[data-sport="wing"] .silhouette-wing,
+  .hero[data-sport="sup"] .silhouette-sup { display: block; }
+
+  /* Wave intensity by sport */
+  .hero[data-sport="sup"] .wave-front,
+  .hero[data-sport="sup"] .wave-mid { transform: scaleY(0.5); transform-origin: bottom; }
+  .hero[data-sport="surf"] .wave-front { transform: scaleY(1.3); transform-origin: bottom; }
+
+  /* === Sun === */
+  .sun-wrapper {
+    position: absolute;
+    top: 22%;
+    right: 22%;
+    width: 100px;
+    height: 100px;
+    pointer-events: none;
+    animation: sunRise 6s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+  }
+  @keyframes sunRise {
+    0% { transform: translateY(60px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+  .sun {
+    position: absolute;
+    inset: 25%;
+    background: radial-gradient(circle at 30% 30%, #FFF8DC, #FFD480 60%, #FFA756 100%);
+    border-radius: 50%;
+    box-shadow:
+      0 0 60px rgba(255, 213, 128, 0.9),
+      0 0 120px rgba(255, 180, 90, 0.6),
+      0 0 200px rgba(255, 140, 60, 0.4);
+    animation: sunBreathe 4s ease-in-out infinite;
+  }
+  @keyframes sunBreathe {
+    0%, 100% { transform: scale(1); filter: brightness(1); }
+    50% { transform: scale(1.06); filter: brightness(1.15); }
+  }
+  .sun-glow {
+    position: absolute;
+    inset: -50%;
+    background: radial-gradient(circle, rgba(255, 200, 120, 0.3) 0%, transparent 60%);
+    animation: sunBreathe 4s ease-in-out infinite reverse;
+  }
+  .sun-rays {
+    position: absolute;
+    inset: 0;
+    animation: spin 60s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .sun-rays span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 80px;
+    height: 2px;
+    background: linear-gradient(to right, transparent, rgba(255, 220, 150, 0.4), transparent);
+    transform-origin: 0 0;
+  }
+  .sun-rays span:nth-child(1) { transform: rotate(0deg); }
+  .sun-rays span:nth-child(2) { transform: rotate(45deg); }
+  .sun-rays span:nth-child(3) { transform: rotate(90deg); }
+  .sun-rays span:nth-child(4) { transform: rotate(135deg); }
+  .sun-rays span:nth-child(5) { transform: rotate(180deg); }
+  .sun-rays span:nth-child(6) { transform: rotate(225deg); }
+  .sun-rays span:nth-child(7) { transform: rotate(270deg); }
+  .sun-rays span:nth-child(8) { transform: rotate(315deg); }
+
+  /* === Clouds === */
+  .cloud {
+    position: absolute;
+    background: white;
+    border-radius: 100px;
+    opacity: 0.65;
+    filter: blur(0.5px);
+  }
+  .cloud::before, .cloud::after {
+    content: "";
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+  }
+  .cloud-1 {
+    top: 12%;
+    left: 10%;
+    width: 120px;
+    height: 24px;
+    animation: cloudDrift 60s linear infinite;
+  }
+  .cloud-1::before { width: 50px; height: 50px; top: -25px; left: 15px; }
+  .cloud-1::after { width: 40px; height: 40px; top: -20px; left: 60px; }
+  .cloud-2 {
+    top: 25%;
+    left: 55%;
+    width: 90px;
+    height: 18px;
+    opacity: 0.4;
+    animation: cloudDrift 90s linear infinite reverse;
+    animation-delay: -30s;
+  }
+  .cloud-2::before { width: 35px; height: 35px; top: -18px; left: 10px; }
+  .cloud-2::after { width: 30px; height: 30px; top: -15px; left: 45px; }
+  .cloud-3 {
+    top: 8%;
+    left: 75%;
+    width: 70px;
+    height: 14px;
+    opacity: 0.5;
+    animation: cloudDrift 80s linear infinite;
+    animation-delay: -50s;
+  }
+  .cloud-3::before { width: 30px; height: 30px; top: -15px; left: 8px; }
+  .cloud-3::after { width: 25px; height: 25px; top: -12px; left: 35px; }
+  @keyframes cloudDrift {
+    from { transform: translateX(-100px); }
+    to { transform: translateX(calc(100vw + 100px)); }
+  }
+
+  /* === Sparkles / first stars === */
+  .sparkle {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 0 8px white, 0 0 16px rgba(255,255,255,0.8);
+    animation: twinkle 3s ease-in-out infinite;
+  }
+  .sparkle-1 { top: 18%; left: 28%; animation-delay: 0s; }
+  .sparkle-2 { top: 8%; left: 45%; animation-delay: 1s; }
+  .sparkle-3 { top: 22%; left: 60%; animation-delay: 0.5s; }
+  .sparkle-4 { top: 14%; left: 88%; animation-delay: 1.5s; }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0; transform: scale(0.5); }
+    50% { opacity: 1; transform: scale(1); }
+  }
+
+  /* === Animated wave layers === */
+  .wave-layer {
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 200%;
+    height: 200px;
+    pointer-events: none;
+  }
+  .wave-back {
+    bottom: 80px;
+    height: 160px;
+    width: 200%;
+    animation: waveSlideBack 18s ease-in-out infinite;
+    opacity: 0.7;
+  }
+  .wave-mid {
+    bottom: 30px;
+    height: 180px;
+    width: 200%;
+    animation: waveSlide 12s ease-in-out infinite reverse;
+    opacity: 0.85;
+  }
+  .wave-front {
+    bottom: 0;
+    height: 200px;
+    width: 200%;
+    animation: waveSlideFront 8s ease-in-out infinite;
+  }
+  .wave-foam {
+    position: absolute;
+    bottom: 30px;
+    left: 0;
+    width: 200%;
+    height: 180px;
+    pointer-events: none;
+    animation: waveSlideFoam 12s ease-in-out infinite reverse;
+  }
+  @keyframes waveSlide {
+    0%, 100% { transform: translateX(0) translateY(0); }
+    50% { transform: translateX(-12%) translateY(-6px); }
+  }
+  @keyframes waveSlideBack {
+    0%, 100% { transform: translateX(0) translateY(0); }
+    50% { transform: translateX(8%) translateY(-3px); }
+  }
+  @keyframes waveSlideFront {
+    0%, 100% { transform: translateX(0) translateY(0); }
+    50% { transform: translateX(-15%) translateY(8px); }
+  }
+  @keyframes waveSlideFoam {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(-12%); }
+  }
+
+  /* === Surfer silhouette === */
+  .surfer {
+    position: absolute;
+    bottom: 50px;
+    left: 18%;
+    width: 50px;
+    height: 65px;
+    z-index: 1;
+    animation: surferBob 3s ease-in-out infinite;
+  }
+  @keyframes surferBob {
+    0%, 100% { transform: translateY(0) rotate(-2deg); }
+    50% { transform: translateY(-8px) rotate(2deg); }
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+    padding-top: 20px;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.3);
+  }
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.1);
+    padding: 6px 16px;
+    border-radius: 999px;
+    margin-bottom: 16px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+  .hero-eyebrow .live-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #58B368;
+    box-shadow: 0 0 8px #58B368;
+    animation: pulse-live 2s ease-in-out infinite;
+  }
+  @keyframes pulse-live {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.2); }
+  }
+  .hero h1 {
+    font-family: 'Rubik', 'Heebo', sans-serif;
+    font-size: clamp(2.2rem, 6.5vw, 4.5rem);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -2px;
+    margin: 0 0 18px;
+    color: white;
+  }
+  .hero h1 .line-1, .hero h1 .line-2 {
+    display: block;
+    opacity: 0;
+    animation: heroTextIn 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+  .hero h1 .line-1 { animation-delay: 0.3s; }
+  .hero h1 .line-2 { animation-delay: 0.7s; }
+  @keyframes heroTextIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .hero h1 .accent {
+    background: linear-gradient(135deg, #FFD93D 0%, #FFA756 50%, #FF6B6B 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: none;
+    filter: drop-shadow(0 0 24px rgba(255, 200, 100, 0.5));
+    display: inline-block;
+    animation: accentGlow 3s ease-in-out infinite;
+  }
+  @keyframes accentGlow {
+    0%, 100% { filter: drop-shadow(0 0 24px rgba(255, 200, 100, 0.5)); }
+    50% { filter: drop-shadow(0 0 36px rgba(255, 200, 100, 0.9)); }
+  }
+
+  .hero-eyebrow, .hero-subtitle, .sport-selector,
+  .header-buttons, .hero-stats {
+    opacity: 0;
+    animation: heroFadeIn 0.8s ease-out forwards;
+  }
+  .hero-eyebrow { animation-delay: 0.1s; }
+  .hero-subtitle { animation-delay: 0.9s; }
+  .sport-selector { animation-delay: 1.1s; }
+  .header-buttons { animation-delay: 1.3s; }
+  .hero-stats { animation-delay: 1.5s; }
+  @keyframes heroFadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .hero-subtitle {
+    font-size: clamp(0.95rem, 1.8vw, 1.15rem);
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0 auto 28px;
+    max-width: 640px;
+    line-height: 1.6;
+    font-weight: 400;
+  }
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: clamp(12px, 4vw, 36px);
+    flex-wrap: wrap;
+    margin-top: 28px;
+  }
+  .hero-stat {
+    text-align: center;
+  }
+  .hero-stat-num {
+    font-family: 'Rubik', sans-serif;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-weight: 800;
+    color: white;
+    line-height: 1;
+  }
+  .hero-stat-label {
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.65);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
+  /* === Sport selector — modern pill style === */
+  .sport-selector {
+    margin-top: 0 !important;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 6px;
+    border-radius: 999px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: inline-flex !important;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    gap: 4px !important;
+  }
+  .sport-btn {
+    background: transparent !important;
+    border: none !important;
+    color: rgba(255, 255, 255, 0.75) !important;
+    padding: 8px 16px !important;
+    font-size: 0.88rem !important;
+    box-shadow: none !important;
+    border-radius: 999px !important;
+  }
+  .sport-btn:hover {
+    color: white !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    transform: none !important;
+  }
+  .sport-btn.active {
+    background: white !important;
+    color: #0F4C5C !important;
+    border-color: white !important;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2) !important;
+  }
+
+  /* === Header buttons - glass style === */
+  .header-buttons {
+    margin-top: 24px;
+  }
+  .match-btn, .glossary-btn, .sources-btn {
+    background: rgba(255, 255, 255, 0.12) !important;
+    color: white !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: none !important;
+  }
+  .match-btn:hover, .glossary-btn:hover, .sources-btn:hover {
+    background: rgba(255, 255, 255, 0.22) !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+  }
+
+  /* Hide old header — replaced by hero */
+  header {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  header h1, header .subtitle {
+    display: none;
+  }
+
+  /* === Section cards — glassmorphism === */
+  .map-card,
+  .info-panel,
+  .top-beaches-sidebar {
+    background: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 8px 32px rgba(15, 76, 92, 0.08), 0 2px 8px rgba(15, 76, 92, 0.04) !important;
+    border-radius: 20px !important;
+  }
+
+  /* === Map improvements (V3 - Leaflet) === */
+  .map-card {
+    padding: 20px !important;
+    overflow: hidden;
+  }
+  .map-card h2 {
+    font-family: 'Rubik', sans-serif !important;
+    font-size: 1.25rem !important;
+    font-weight: 800 !important;
+    color: #0F4C5C !important;
+    text-align: right !important;
+    margin: 0 0 4px !important;
+  }
+  .map-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .map-subtitle {
+    margin: 0;
+    font-size: 0.82rem;
+    color: var(--ink-soft, #475569);
+  }
+  .map-toggle {
+    display: inline-flex;
+    background: rgba(15, 76, 92, 0.08);
+    padding: 3px;
+    border-radius: 999px;
+    gap: 2px;
+  }
+  .mt-btn {
+    background: transparent;
+    border: none;
+    padding: 6px 14px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    border-radius: 999px;
+    cursor: pointer;
+    color: var(--ink-soft, #475569);
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .mt-btn.active {
+    background: white;
+    color: #0F4C5C;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  }
+
+  .leaflet-container {
+    width: 100%;
+    height: 70vh;
+    min-height: 480px;
+    max-height: 720px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(15, 76, 92, 0.12);
+    background: linear-gradient(180deg, #B8E0F0, #4FA8C7);
+  }
+  @media (max-width: 760px) {
+    .leaflet-container { height: 55vh; min-height: 380px; }
+  }
+
+  /* Custom Leaflet beach markers — compact pills with score + wind arrow */
+  .beach-marker {
+    position: relative;
+    background: white;
+    border: 2.5px solid var(--good, #58B368);
+    border-radius: 50%;
+    width: 22px !important;
+    height: 22px !important;
+    margin-left: -11px !important;
+    margin-top: -11px !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: 'Rubik', sans-serif;
+    font-weight: 800;
+    font-size: 0.62rem;
+    color: #0F4C5C;
+  }
+  /* Wind direction arrow — small triangle pointing FROM where wind blows */
+  .wind-arrow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 32px;
+    height: 32px;
+    margin: -16px 0 0 -16px;
+    pointer-events: none;
+    z-index: -1;
+  }
+  .wind-arrow svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    animation: windPulse 2.5s ease-in-out infinite;
+  }
+  .wind-arrow .arrow-tail {
+    stroke: #1F6F8B;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    fill: none;
+    opacity: 0.85;
+  }
+  .wind-arrow .arrow-head {
+    fill: #1F6F8B;
+    opacity: 0.95;
+  }
+  @keyframes windPulse {
+    0%, 100% { transform: scale(1); opacity: 0.85; }
+    50%      { transform: scale(1.12); opacity: 1; }
+  }
+  /* Stronger wind = larger arrow */
+  .wind-arrow.wind-strong svg { animation-duration: 1.2s; }
+  .wind-arrow.wind-strong .arrow-tail,
+  .wind-arrow.wind-strong .arrow-head { stroke: #D96C5A; fill: #D96C5A; }
+  .wind-arrow.wind-medium .arrow-tail,
+  .wind-arrow.wind-medium .arrow-head { stroke: #1F6F8B; fill: #1F6F8B; }
+  .wind-arrow.wind-light svg { animation-duration: 4s; }
+  .wind-arrow.wind-light .arrow-tail,
+  .wind-arrow.wind-light .arrow-head { stroke: #94A3B8; fill: #94A3B8; opacity: 0.7; }
+  .beach-marker:hover {
+    width: 34px !important;
+    height: 34px !important;
+    margin-left: -17px !important;
+    margin-top: -17px !important;
+    border-width: 3px;
+    font-size: 0.78rem;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+    z-index: 999 !important;
+  }
+  .beach-marker.selected {
+    width: 38px !important;
+    height: 38px !important;
+    margin-left: -19px !important;
+    margin-top: -19px !important;
+    border-width: 3.5px;
+    box-shadow: 0 0 0 5px rgba(15, 76, 92, 0.18), 0 6px 18px rgba(0,0,0,0.35);
+    font-size: 0.85rem;
+  }
+  .beach-marker.top-pick::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 22px;
+    height: 22px;
+    margin-left: -11px;
+    margin-top: -11px;
+    border-radius: 50%;
+    border: 2px solid var(--good, #58B368);
+    animation: ripple 1.8s ease-out infinite;
+    pointer-events: none;
+  }
+  .beach-marker.top-pick:hover::after { width: 34px; height: 34px; margin-left: -17px; margin-top: -17px; }
+  .beach-marker.top-pick.selected::after { width: 38px; height: 38px; margin-left: -19px; margin-top: -19px; }
+  @keyframes ripple {
+    0% { transform: scale(1); opacity: 0.9; }
+    100% { transform: scale(2.2); opacity: 0; }
+  }
+
+  /* City labels — cartographic typography with white outline for legibility */
+  .city-label {
+    color: #1F3A52;
+    font-family: 'Heebo', sans-serif;
+    font-weight: 600;
+    font-size: 0.72rem;
+    letter-spacing: 0.2px;
+    background: transparent;
+    border: none;
+    padding: 0;
+    box-shadow: none;
+    white-space: nowrap;
+    pointer-events: none !important;
+    text-align: center;
+    direction: rtl;
+    /* White outline using paint-order trick + text-shadow for browser fallback */
+    text-shadow:
+      0 0 3px rgba(255,255,255,0.95),
+      0 0 3px rgba(255,255,255,0.95),
+      1px 1px 2px rgba(255,255,255,0.95),
+      -1px -1px 2px rgba(255,255,255,0.95),
+      1px -1px 2px rgba(255,255,255,0.95),
+      -1px 1px 2px rgba(255,255,255,0.95);
+    -webkit-text-stroke: 0.5px rgba(255,255,255,0.6);
+  }
+  .city-label.major {
+    font-size: 0.92rem;
+    font-weight: 800;
+    color: #0F2238;
+    letter-spacing: 0.5px;
+    text-shadow:
+      0 0 4px rgba(255,255,255,0.98),
+      0 0 4px rgba(255,255,255,0.98),
+      1px 1px 3px rgba(255,255,255,0.95),
+      -1px -1px 3px rgba(255,255,255,0.95),
+      1px -1px 3px rgba(255,255,255,0.95),
+      -1px 1px 3px rgba(255,255,255,0.95);
+  }
+
+  /* Beach popup styling */
+  .leaflet-popup-content-wrapper {
+    border-radius: 16px !important;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.15) !important;
+    padding: 0 !important;
+    overflow: hidden;
+  }
+  .leaflet-popup-content {
+    margin: 0 !important;
+    padding: 16px 18px !important;
+    direction: rtl;
+    font-family: 'Heebo', sans-serif;
+    min-width: 200px;
+  }
+  .leaflet-popup-tip {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+  }
+  .bp-name {
+    font-family: 'Rubik', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #0F4C5C;
+    margin-bottom: 4px;
+  }
+  .bp-score-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 8px 0;
+  }
+  .bp-score {
+    font-family: 'Rubik', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 900;
+    line-height: 1;
+  }
+  .bp-score-label {
+    font-size: 0.78rem;
+    color: #64748B;
+  }
+  .bp-stats {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+    color: #475569;
+    margin: 8px 0;
+    direction: ltr;
+  }
+  .bp-cta {
+    display: block;
+    margin-top: 10px;
+    padding: 8px 14px;
+    background: linear-gradient(135deg, #1F6F8B, #0F4C5C);
+    color: white;
+    text-align: center;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.88rem;
+    cursor: pointer;
+    border: none;
+    width: 100%;
+    font-family: inherit;
+  }
+  .bp-cta:hover { background: linear-gradient(135deg, #0F4C5C, #082F3D); }
+
+  .leaflet-control-attribution {
+    font-size: 10px !important;
+    background: rgba(255,255,255,0.85) !important;
+  }
+  .israel-map {
+    filter: drop-shadow(0 4px 12px rgba(15, 76, 92, 0.08));
+  }
+  .beach-dot {
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+  }
+  .beach-dot:hover {
+    r: 11 !important;
+    stroke-width: 3 !important;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+  }
+  .beach-dot.selected {
+    r: 11 !important;
+    stroke-width: 3.5 !important;
+    filter: drop-shadow(0 4px 12px rgba(15, 76, 92, 0.4));
+  }
+  .beach-dot.top-pick {
+    animation: pulse-pick 2s ease-in-out infinite;
+  }
+  @keyframes pulse-pick {
+    0%, 100% { filter: drop-shadow(0 0 0 rgba(88, 179, 104, 0.6)); }
+    50%      { filter: drop-shadow(0 0 12px rgba(88, 179, 104, 0.9)); }
+  }
+  .beach-label {
+    font-family: 'Heebo', sans-serif !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    fill: #0F4C5C !important;
+  }
+
+  /* New cleaner legend */
+  .legend {
+    background: linear-gradient(135deg, rgba(127, 200, 224, 0.1), rgba(232, 181, 71, 0.1));
+    padding: 12px 18px;
+    border-radius: 12px;
+    margin-top: 16px;
+    border: 1px solid rgba(127, 200, 224, 0.3);
+  }
+  .legend-item {
+    font-weight: 600;
+    color: #0F4C5C;
+  }
+
+  /* === Smart Empty State (V3 enhanced) === */
+  .smart-empty {
+    padding: 28px 24px !important;
+  }
+  .smart-empty .se-eyebrow {
+    font-family: 'Rubik', sans-serif;
+    color: #4FA8C7 !important;
+    font-weight: 700 !important;
+  }
+  .se-pick-card {
+    background: linear-gradient(135deg, #0F4C5C 0%, #1F6F8B 100%) !important;
+    border: none !important;
+    color: white !important;
+    border-radius: 20px !important;
+    padding: 32px 24px !important;
+    box-shadow: 0 12px 32px rgba(15, 76, 92, 0.25);
+    position: relative;
+    overflow: hidden;
+  }
+  .se-pick-card::before {
+    content: "";
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .se-pick-medal {
+    font-size: 2.5rem !important;
+    margin-bottom: 12px !important;
+    filter: drop-shadow(0 4px 12px rgba(255, 215, 0, 0.4));
+  }
+  .se-pick-name {
+    font-family: 'Rubik', sans-serif !important;
+    font-size: 1.6rem !important;
+    color: white !important;
+    margin-bottom: 8px !important;
+    font-weight: 800 !important;
+  }
+  .se-pick-score {
+    font-family: 'Rubik', sans-serif !important;
+    font-size: 3.5rem !important;
+    line-height: 1 !important;
+    margin: 12px 0 !important;
+    color: white !important;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  }
+  .se-pick-score span {
+    font-size: 1.4rem !important;
+  }
+  .se-pick-time {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-size: 1rem !important;
+    margin: 8px 0 !important;
+  }
+  .se-pick-time strong {
+    color: #FFD93D !important;
+    font-size: 1.15rem;
+  }
+  .se-pick-stats {
+    color: rgba(255, 255, 255, 0.85) !important;
+    font-size: 0.92rem !important;
+    margin-top: 12px !important;
+  }
+  .se-pick-cta {
+    color: rgba(255, 255, 255, 0.85) !important;
+    margin-top: 16px !important;
+    font-weight: 600 !important;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+  }
+  .se-runner-up {
+    background: white !important;
+    border: 1px solid rgba(15, 76, 92, 0.1) !important;
+    border-radius: 12px !important;
+    padding: 12px 16px !important;
+    transition: all 0.2s !important;
+  }
+  .se-runner-up:hover {
+    border-color: #4FA8C7 !important;
+    box-shadow: 0 4px 12px rgba(15, 76, 92, 0.08) !important;
+  }
+  .se-ru-name {
+    font-weight: 700 !important;
+    color: #0F4C5C !important;
+  }
+
+  /* === Top beaches sidebar === */
+  .tb-header {
+    border-bottom: 2px solid rgba(127, 200, 224, 0.3) !important;
+  }
+  .tb-header h2 {
+    font-family: 'Rubik', sans-serif !important;
+    color: #0F4C5C !important;
+    font-size: 1.05rem !important;
+    font-weight: 800 !important;
+  }
+  .tb-day {
+    border: 1px solid rgba(15, 76, 92, 0.08) !important;
+    border-radius: 14px !important;
+    padding: 14px 16px !important;
+    transition: all 0.2s !important;
+    background: white !important;
+  }
+  .tb-day:hover {
+    border-color: #4FA8C7 !important;
+    transform: translateX(-3px) !important;
+    box-shadow: 0 6px 20px rgba(15, 76, 92, 0.08) !important;
+  }
+  .tb-day.selected {
+    background: linear-gradient(135deg, rgba(31, 111, 139, 0.05), rgba(127, 200, 224, 0.1)) !important;
+    border-color: #1F6F8B !important;
+    border-width: 2px !important;
+  }
+  .tb-beach {
+    font-family: 'Rubik', sans-serif !important;
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    color: #0F4C5C !important;
+  }
+  .tb-score-badge {
+    border-radius: 999px !important;
+    font-family: 'Rubik', sans-serif !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  /* === Beach info card upgrades === */
+  .info-panel {
+    padding: 28px !important;
+  }
+  .beach-header h2 {
+    font-family: 'Rubik', sans-serif !important;
+    font-size: 1.8rem !important;
+    font-weight: 800 !important;
+    color: #0F4C5C !important;
+  }
+  .score-card {
+    background: linear-gradient(135deg, #0F4C5C 0%, #1F6F8B 100%) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 20px !important;
+    padding: 24px !important;
+    box-shadow: 0 12px 32px rgba(15, 76, 92, 0.2);
+    position: relative;
+    overflow: hidden;
+  }
+  .score-card::before {
+    content: "";
+    position: absolute;
+    top: -100%;
+    left: -100%;
+    width: 300%;
+    height: 300%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 40%);
+    animation: shimmer 8s ease-in-out infinite;
+  }
+  @keyframes shimmer {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(20%, 20%); }
+  }
+  .score-card .score-label {
+    color: rgba(255, 255, 255, 0.85) !important;
+    font-family: 'Rubik', sans-serif;
+    font-weight: 700;
+  }
+  .score-card .score-value {
+    font-family: 'Rubik', sans-serif !important;
+    font-size: 2.4rem !important;
+    color: white !important;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+  .score-card .score-value.good { color: #6EE7A8 !important; }
+  .score-card .score-value.okay { color: #FFD93D !important; }
+  .score-card .score-value.bad { color: #FF8A75 !important; }
+  .score-card .score-bar {
+    background: rgba(255, 255, 255, 0.2) !important;
+    height: 12px !important;
+  }
+  .score-card .score-msg {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 500;
+  }
+
+  /* === Forecast day cards === */
+  .day {
+    background: white !important;
+    border: 1.5px solid rgba(15, 76, 92, 0.08) !important;
+    border-radius: 16px !important;
+    padding: 14px 8px !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  .day:hover {
+    transform: translateY(-4px) !important;
+    box-shadow: 0 10px 24px rgba(15, 76, 92, 0.12) !important;
+    border-color: #4FA8C7 !important;
+  }
+  .day.open {
+    background: linear-gradient(135deg, rgba(127, 200, 224, 0.1), white) !important;
+    border-color: #1F6F8B !important;
+    border-width: 2px !important;
+  }
+  .day .dow {
+    font-family: 'Rubik', sans-serif !important;
+    font-weight: 800 !important;
+    color: #0F4C5C !important;
+  }
+  .day .day-score {
+    font-family: 'Rubik', sans-serif !important;
+    font-size: 1.6rem !important;
+    font-weight: 900 !important;
+  }
+
+  /* === Compass cards === */
+  .compass-card {
+    background: linear-gradient(135deg, white, rgba(127, 200, 224, 0.05)) !important;
+    border: 1px solid rgba(15, 76, 92, 0.08) !important;
+    border-radius: 16px !important;
+    padding: 16px !important;
+  }
+  .cc-label {
+    font-family: 'Rubik', sans-serif !important;
+    color: #0F4C5C !important;
+    font-weight: 700 !important;
+  }
+
+  /* === About section === */
+  .about-section {
+    background: linear-gradient(135deg, rgba(15, 76, 92, 0.95), rgba(31, 111, 139, 0.95)) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 24px !important;
+    padding: 48px 32px !important;
+    margin-top: 48px !important;
+  }
+  .about-section h2 {
+    font-family: 'Rubik', sans-serif !important;
+    color: white !important;
+    font-size: 2rem !important;
+    font-weight: 800 !important;
+  }
+  .about-section .about-lead {
+    color: white !important;
+    font-size: 1.3rem !important;
+  }
+  .about-section p {
+    color: rgba(255, 255, 255, 0.9) !important;
+  }
+  .about-section strong {
+    color: #FFD93D !important;
+  }
+  .about-quote {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-right: 4px solid #FFD93D !important;
+    color: white !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    font-family: 'Rubik', sans-serif !important;
+    font-size: 1.4rem !important;
+    font-style: italic;
+  }
+  .about-future {
+    background: rgba(255, 217, 61, 0.15) !important;
+    border-right: 3px solid #FFD93D !important;
+    color: white !important;
+  }
+  .about-signoff {
+    color: white !important;
+    border-top-color: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  /* === Section titles === */
+  h3.section-title {
+    font-family: 'Rubik', sans-serif !important;
+    font-size: 1.1rem !important;
+    font-weight: 800 !important;
+    color: #0F4C5C !important;
+  }
+  h3.section-title::before {
+    background: linear-gradient(180deg, #1F6F8B, #4FA8C7) !important;
+    width: 5px !important;
+    height: 22px !important;
+    border-radius: 3px !important;
+  }
+
+  /* === Animations === */
+  .map-card, .info-panel, .top-beaches-sidebar {
+    animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+  }
+  .map-card { animation-delay: 0.1s; }
+  .info-panel { animation-delay: 0.2s; }
+  .top-beaches-sidebar { animation-delay: 0.3s; }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* === Mobile === */
+  @media (max-width: 760px) {
+    .hero {
+      margin: -14px -10px 24px;
+      padding: 36px 18px 60px;
+      border-radius: 0 0 24px 24px;
+    }
+    .hero h1 { font-size: clamp(1.6rem, 8vw, 2.4rem); }
+    .hero-stats { gap: 16px; }
+    .map-card, .info-panel, .top-beaches-sidebar {
+      padding: 18px !important;
+      border-radius: 16px !important;
+    }
+    .se-pick-score { font-size: 2.8rem !important; }
+    .se-pick-name { font-size: 1.3rem !important; }
+  }
+
+  /* ===================== Smart Empty State (v2) ===================== */
+  .smart-empty {
+    padding: 32px 24px;
+    text-align: center;
+  }
+  .smart-empty .se-eyebrow {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+  }
+  .smart-empty .se-loading {
+    color: var(--ink-soft);
+    font-size: 1rem;
+    padding: 60px 20px;
+  }
+  .smart-empty .se-hint {
+    margin-top: 18px;
+    color: var(--ink-soft);
+    font-size: 0.85rem;
+    padding-top: 14px;
+    border-top: 1px dashed var(--sand-light);
+  }
+  .se-pick-card {
+    background: linear-gradient(135deg, var(--sky-pale), var(--sand-pale));
+    border: 1.5px solid var(--sky-mid);
+    border-radius: 12px;
+    padding: 22px 20px;
+    margin: 8px 0 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  body.theme-pro .se-pick-card {
+    background: white;
+    border: 1.5px solid #1E293B;
+  }
+  .se-pick-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  .se-pick-medal {
+    font-size: 2rem;
+    margin-bottom: 8px;
+  }
+  .se-pick-name {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--sea-darker);
+    margin-bottom: 6px;
+  }
+  .se-pick-score {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin: 8px 0;
+  }
+  .se-pick-time {
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+    margin: 6px 0;
+  }
+  .se-pick-time strong {
+    color: var(--sea-darker);
+    direction: ltr;
+    display: inline-block;
+  }
+  .se-pick-stats {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+    direction: ltr;
+    margin-top: 8px;
+  }
+  .se-pick-cta {
+    margin-top: 12px;
+    font-weight: 600;
+    color: var(--sea-deep);
+    font-size: 0.88rem;
+  }
+
+  .se-runner-ups {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--sand-light);
+  }
+  .se-runner-ups-title {
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+  }
+  .se-runner-up {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: white;
+    border: 1px solid var(--sand-light);
+    border-radius: 8px;
+    margin-bottom: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .se-runner-up:hover {
+    border-color: var(--sky-mid);
+    transform: translateX(-3px);
+  }
+  .se-ru-name { font-weight: 600; color: var(--ink); }
+  .se-ru-score {
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+    color: white;
+    direction: ltr;
+    font-size: 0.85rem;
+  }
+
+  /* ===================== Improved Mobile Layout (v2) ===================== */
+  @media (max-width: 1100px) {
+    main { grid-template-columns: 1fr 1fr; gap: 16px; }
+    .top-beaches-sidebar {
+      grid-column: 1 / -1;
+      order: 3;
+      max-height: none;
+      position: static;
+    }
+  }
+  @media (max-width: 760px) {
+    main {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+    .map-card {
+      position: static;
+      order: 1;
+    }
+    .info-panel { order: 2; }
+    .top-beaches-sidebar { order: 3; }
+    .israel-map { max-height: 55vh; }
+    .header-buttons {
+      gap: 6px;
+    }
+    .match-btn, .glossary-btn, .sources-btn {
+      padding: 7px 12px;
+      font-size: 0.85rem;
+    }
+    .sport-selector {
+      gap: 5px;
+    }
+    .sport-btn {
+      padding: 7px 12px;
+      font-size: 0.85rem;
+    }
+    .sport-btn .icon { font-size: 1rem; }
+  }
+  @media (max-width: 480px) {
+    .app { padding: 14px 10px 28px; }
+    header h1 { font-size: 1.4rem; }
+    header .subtitle { font-size: 0.88rem; }
+    .sport-selector {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+    .sport-btn {
+      padding: 8px 6px;
+      font-size: 0.78rem;
+      justify-content: center;
+    }
+    .header-buttons {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 6px;
+    }
+    .match-btn, .glossary-btn, .sources-btn {
+      width: 100%;
+      text-align: center;
+    }
+    .compass-row {
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .compass-card { padding: 8px 6px; }
+    .forecast {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+    }
+    .day { padding: 8px 4px; font-size: 0.72rem; }
+    .day .day-score { font-size: 1.2rem; }
   }
 
   /* Skip-to-content link (accessibility) */
@@ -2129,14 +3504,178 @@
 
 <div class="app">
 
-<header role="banner">
-  <h1><span class="wave-emoji" aria-hidden="true">🌊</span> תחזית ים - חופי ישראל</h1>
-  <div class="subtitle">בחר חוף על המפה וצלול לתוך תחזית מפורטת לפי סוג ספורט ימי</div>
-  <div class="sport-selector" id="sportSelector"></div>
-  <div class="header-buttons">
-    <button class="match-btn" id="openMatcher">🎯 חפש את התנאים שלך</button>
-    <button class="glossary-btn" id="openGlossary">📚 מילון מונחים</button>
-    <button class="sources-btn" id="openSources">📊 מקורות נתונים</button>
+<header role="banner" class="hero">
+  <!-- Animated cinematic ocean scene background -->
+  <div class="hero-scene" aria-hidden="true">
+    <!-- Sky gradient -->
+    <div class="sky"></div>
+
+    <!-- Sun with rays -->
+    <div class="sun-wrapper">
+      <div class="sun-glow"></div>
+      <div class="sun"></div>
+      <div class="sun-rays">
+        <span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span>
+      </div>
+    </div>
+
+    <!-- Floating clouds -->
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+    <div class="cloud cloud-3"></div>
+
+    <!-- Stars / sparkles -->
+    <div class="sparkle sparkle-1"></div>
+    <div class="sparkle sparkle-2"></div>
+    <div class="sparkle sparkle-3"></div>
+    <div class="sparkle sparkle-4"></div>
+
+    <!-- Multi-layer animated waves (parallax) -->
+    <svg class="wave-layer wave-back" viewBox="0 0 1440 200" preserveAspectRatio="none">
+      <path d="M0,100 C200,140 400,60 600,100 C800,140 1000,60 1200,100 C1300,120 1400,90 1440,100 L1440,200 L0,200 Z" fill="url(#waveBackGrad)"/>
+      <defs>
+        <linearGradient id="waveBackGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(127,200,224,0.55)"/>
+          <stop offset="100%" stop-color="rgba(31,111,139,0.85)"/>
+        </linearGradient>
+      </defs>
+    </svg>
+
+    <svg class="wave-layer wave-mid" viewBox="0 0 1440 200" preserveAspectRatio="none">
+      <path d="M0,120 C300,170 500,80 700,120 C900,160 1100,80 1300,120 C1380,140 1440,110 1440,120 L1440,200 L0,200 Z" fill="url(#waveMidGrad)"/>
+      <defs>
+        <linearGradient id="waveMidGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(79,168,199,0.7)"/>
+          <stop offset="100%" stop-color="rgba(15,76,92,0.95)"/>
+        </linearGradient>
+      </defs>
+    </svg>
+
+    <svg class="wave-layer wave-front" viewBox="0 0 1440 200" preserveAspectRatio="none">
+      <path d="M0,140 C200,190 400,110 700,140 C900,170 1100,110 1300,140 C1380,150 1440,135 1440,140 L1440,200 L0,200 Z" fill="url(#waveFrontGrad)"/>
+      <defs>
+        <linearGradient id="waveFrontGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="rgba(15,76,92,0.95)"/>
+          <stop offset="100%" stop-color="#062029"/>
+        </linearGradient>
+      </defs>
+    </svg>
+
+    <!-- Wave foam highlights -->
+    <svg class="wave-foam" viewBox="0 0 1440 200" preserveAspectRatio="none">
+      <path d="M0,138 C200,188 400,108 700,138 C900,168 1100,108 1300,138 C1380,148 1440,133 1440,138" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+      <path d="M0,118 C300,168 500,78 700,118 C900,158 1100,78 1300,118 C1380,138 1440,108 1440,118" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1"/>
+    </svg>
+
+    <!-- Sport-specific silhouettes (only active sport's silhouette is shown) -->
+    <!-- Surfing -->
+    <svg class="silhouette silhouette-surf" viewBox="0 0 80 80" width="70" height="70" aria-hidden="true">
+      <ellipse cx="40" cy="72" rx="32" ry="3" fill="rgba(0,0,0,0.25)"/>
+      <path d="M 4 68 Q 40 56, 76 68" stroke="#0F172A" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <circle cx="40" cy="36" r="5" fill="#0F172A"/>
+      <path d="M 40 41 L 37 62 L 43 62 Z" fill="#0F172A"/>
+      <path d="M 37 46 L 28 52" stroke="#0F172A" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M 43 46 L 52 56" stroke="#0F172A" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>
+
+    <!-- Kitesurfing -->
+    <svg class="silhouette silhouette-kite" viewBox="0 0 200 200" width="140" height="140" aria-hidden="true">
+      <!-- Kite up in sky -->
+      <path d="M 20 30 Q 100 5, 180 30 L 170 50 Q 100 30, 30 50 Z" fill="#0F172A"/>
+      <line x1="100" y1="50" x2="100" y2="155" stroke="#0F172A" stroke-width="1.5"/>
+      <line x1="60" y1="55" x2="98" y2="155" stroke="#0F172A" stroke-width="1"/>
+      <line x1="140" y1="55" x2="102" y2="155" stroke="#0F172A" stroke-width="1"/>
+      <!-- Board with person -->
+      <path d="M 70 175 Q 100 165, 130 175" stroke="#0F172A" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <circle cx="100" cy="150" r="4" fill="#0F172A"/>
+      <path d="M 100 154 L 96 170 L 104 170 Z" fill="#0F172A"/>
+      <ellipse cx="100" cy="178" rx="28" ry="2.5" fill="rgba(0,0,0,0.25)"/>
+    </svg>
+
+    <!-- Windsurfing -->
+    <svg class="silhouette silhouette-windsurf" viewBox="0 0 120 140" width="90" height="100" aria-hidden="true">
+      <!-- Sail -->
+      <path d="M 60 10 L 60 100 L 110 50 Z" fill="#0F172A"/>
+      <line x1="60" y1="10" x2="60" y2="110" stroke="#0F172A" stroke-width="2"/>
+      <!-- Person -->
+      <circle cx="55" cy="80" r="4" fill="#0F172A"/>
+      <path d="M 55 84 L 50 110 L 60 110 Z" fill="#0F172A"/>
+      <!-- Board -->
+      <path d="M 25 125 Q 60 117, 95 125" stroke="#0F172A" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <ellipse cx="60" cy="130" rx="32" ry="2.5" fill="rgba(0,0,0,0.25)"/>
+    </svg>
+
+    <!-- Wing foiling -->
+    <svg class="silhouette silhouette-wing" viewBox="0 0 120 120" width="80" height="80" aria-hidden="true">
+      <!-- Wing -->
+      <path d="M 25 50 Q 35 25, 60 25 Q 85 25, 95 50 Q 85 40, 60 40 Q 35 40, 25 50 Z" fill="#0F172A"/>
+      <!-- Person -->
+      <circle cx="60" cy="62" r="4" fill="#0F172A"/>
+      <path d="M 60 66 L 56 92 L 64 92 Z" fill="#0F172A"/>
+      <path d="M 56 70 L 45 50" stroke="#0F172A" stroke-width="2" stroke-linecap="round"/>
+      <path d="M 64 70 L 75 50" stroke="#0F172A" stroke-width="2" stroke-linecap="round"/>
+      <!-- Foil board (floating above water) -->
+      <path d="M 28 105 Q 60 97, 92 105" stroke="#0F172A" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <line x1="60" y1="100" x2="60" y2="115" stroke="#0F172A" stroke-width="1.5"/>
+      <ellipse cx="60" cy="118" rx="28" ry="2" fill="rgba(0,0,0,0.2)"/>
+    </svg>
+
+    <!-- SUP (Stand-Up Paddle) -->
+    <svg class="silhouette silhouette-sup" viewBox="0 0 100 130" width="70" height="90" aria-hidden="true">
+      <!-- Paddle -->
+      <line x1="20" y1="20" x2="60" y2="100" stroke="#0F172A" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M 13 13 L 27 13 L 23 25 L 17 25 Z" fill="#0F172A"/>
+      <!-- Person standing -->
+      <circle cx="50" cy="50" r="4" fill="#0F172A"/>
+      <path d="M 50 54 L 46 95 L 54 95 Z" fill="#0F172A"/>
+      <path d="M 48 65 L 35 55" stroke="#0F172A" stroke-width="2" stroke-linecap="round"/>
+      <path d="M 52 65 L 62 70" stroke="#0F172A" stroke-width="2" stroke-linecap="round"/>
+      <!-- Board (wider, flatter than surf) -->
+      <ellipse cx="50" cy="110" rx="38" ry="4" fill="#0F172A"/>
+      <ellipse cx="50" cy="118" rx="34" ry="2" fill="rgba(0,0,0,0.25)"/>
+    </svg>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <span class="live-dot" aria-hidden="true"></span>
+      תחזית מתעדכנת בזמן אמת
+    </div>
+    <h1>
+      <span class="line-1">בחר את הים שלך.</span>
+      <span class="line-2">תפוס את <span class="accent">החלון המושלם.</span></span>
+    </h1>
+    <p class="hero-subtitle">
+      תחזיות גלים, רוח, וציון התאמה אישי לכל ספורט ימי — לקהילת הגולשים בישראל
+    </p>
+
+    <div class="sport-selector" id="sportSelector" role="tablist" aria-label="בחירת סוג ספורט"></div>
+
+    <div class="header-buttons">
+      <button class="match-btn" id="openMatcher">🎯 חפש את התנאים שלך</button>
+      <button class="glossary-btn" id="openGlossary">📚 מילון מונחים</button>
+      <button class="sources-btn" id="openSources">📊 מקורות נתונים</button>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num" data-target="25">0</div>
+        <div class="hero-stat-label">חופים</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num" data-target="5">0</div>
+        <div class="hero-stat-label">ספורטים</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num" data-target="7">0</div>
+        <div class="hero-stat-label">ימי תחזית</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num" data-target="4">0</div>
+        <div class="hero-stat-label">מודלים</div>
+      </div>
+    </div>
   </div>
 </header>
 
@@ -2146,23 +3685,50 @@
 <main id="mainContent" role="main">
   <!-- LEFT: Map -->
   <section class="map-card">
-    <h2>מפת חופי ישראל</h2>
+    <div class="map-header">
+      <div>
+        <h2>מפת חופי ישראל</h2>
+        <p class="map-subtitle">לחץ על חוף לתחזית מלאה • סמן צבע לפי תנאים נוכחיים</p>
+      </div>
+    </div>
 
-    <svg class="israel-map" viewBox="0 0 500 720" xmlns="http://www.w3.org/2000/svg" id="map">
+    <!-- Real Leaflet map -->
+    <div id="leafletMap" class="leaflet-container"></div>
+
+    <!-- Hidden legacy SVG (kept for backwards compatibility but display:none) -->
+    <svg class="israel-map" style="display:none" viewBox="0 0 500 720" xmlns="http://www.w3.org/2000/svg" id="map">
       <defs>
         <linearGradient id="seaGradient" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stop-color="#B8E0F0"/>
           <stop offset="50%" stop-color="#7FC8E0"/>
           <stop offset="100%" stop-color="#4FA8C7"/>
         </linearGradient>
+        <linearGradient id="seaGradientDeep" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#A8D5E5"/>
+          <stop offset="100%" stop-color="#3A8AA8"/>
+        </linearGradient>
         <linearGradient id="landGradient" x1="0" y1="0" x2="1" y2="0">
-          <stop offset="0%" stop-color="#F0E2C0"/>
-          <stop offset="50%" stop-color="#E0CB97"/>
+          <stop offset="0%" stop-color="#F5E8C8"/>
+          <stop offset="50%" stop-color="#E5D2A0"/>
           <stop offset="100%" stop-color="#C9A96E"/>
         </linearGradient>
         <pattern id="waves" x="0" y="0" width="40" height="20" patternUnits="userSpaceOnUse">
-          <path d="M0 10 Q 10 0, 20 10 T 40 10" stroke="rgba(255,255,255,0.4)" fill="none" stroke-width="1"/>
+          <path d="M0 10 Q 10 0, 20 10 T 40 10" stroke="rgba(255,255,255,0.5)" fill="none" stroke-width="1"/>
         </pattern>
+        <pattern id="wavesLight" x="0" y="0" width="60" height="30" patternUnits="userSpaceOnUse">
+          <path d="M0 15 Q 15 5, 30 15 T 60 15" stroke="rgba(255,255,255,0.25)" fill="none" stroke-width="0.8"/>
+        </pattern>
+        <filter id="dotGlow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="2" result="blur"/>
+          <feMerge>
+            <feMergeNode in="blur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+        <radialGradient id="dotPulse" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="rgba(255,255,255,0.5)"/>
+          <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+        </radialGradient>
       </defs>
 
       <!-- Sea (background) -->
@@ -2287,12 +3853,12 @@
     </div>
   </section>
 
-  <!-- CENTER: Info panel -->
+  <!-- CENTER: Info panel - smart empty state with today's top pick -->
   <section class="info-panel" id="infoPanel">
-    <div class="panel-empty">
-      <span class="icon-big">🏖️</span>
-      <div>בחר חוף על המפה כדי לראות תחזית ים מפורטת</div>
-      <div style="font-size:0.85rem; margin-top:8px;">לחץ על חוף — אחר כך תוכל לצלול לתוך כל יום בתחזית</div>
+    <div class="smart-empty" id="smartEmpty">
+      <div class="se-eyebrow">🌊 מצב הים בישראל היום</div>
+      <div id="seTopPick" class="se-loading">מחשב את החוף הטוב ביותר היום…</div>
+      <div class="se-hint">⬆ בחר סוג ספורט · 🗺️ או לחץ על חוף במפה לפרטים מלאים</div>
     </div>
   </section>
 
@@ -2357,8 +3923,11 @@
     <button class="footer-link" id="openContact">✉️ יצירת קשר</button>
   </div>
   <div class="footer-attribution">
-    <strong>קרדיט נתונים:</strong>
-    תחזיות גלים ורוח: <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a> (CC-BY 4.0) • מודלים: ECMWF IFS, ICON-EU, GFS, GEM
+    <strong>קרדיט:</strong>
+    תחזיות: <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a> (CC-BY 4.0) ·
+    מפה: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a> (ODbL),
+    סגנון © <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a> ·
+    ספרייה: <a href="https://leafletjs.com" target="_blank" rel="noopener">Leaflet</a> (BSD)
   </div>
   <span id="lastUpdate"></span>
   <div class="footer-tagline">
@@ -2398,119 +3967,7 @@
 
 <!-- Theme toggle removed — site is fixed in professional mode -->
 
-<!-- Admin button (hidden, revealed via ?admin=1) -->
-<button class="admin-button" id="adminButton" hidden title="פאנל ניהול">⚙️</button>
-
-<!-- Admin Panel Modal -->
-<div class="modal-backdrop" id="adminModal" hidden>
-  <div class="modal-content modal-wide">
-    <div class="modal-header">
-      <h2>🛠️ פאנל ניהול</h2>
-      <button class="close-btn" id="closeAdmin">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="admin-tabs">
-        <button class="admin-tab active" data-tab="ads">📢 פרסומות</button>
-        <button class="admin-tab" data-tab="analytics">📊 אנליטיקס</button>
-        <button class="admin-tab" data-tab="stats">📈 סטטיסטיקות</button>
-      </div>
-
-      <!-- ADS TAB -->
-      <div class="admin-pane" data-pane="ads">
-        <p class="modal-intro">נהל את הפרסומות שמופיעות באתר. הקוד יכול להיות AdSense, באנר HTML, או JavaScript של כל רשת פרסום אחרת.</p>
-
-        <div class="admin-section">
-          <label class="admin-label">בחר מיקום פרסומת:</label>
-          <select id="adSlotSelect" class="admin-input">
-            <option value="header">באנר עליון (728×90) - מתחת לכותרת</option>
-            <option value="sidebar">סיידבר (300×250) - מתחת ל"מובילים"</option>
-            <option value="beach-info">פאנל חוף (300×100) - בתוך פירוט החוף</option>
-            <option value="footer">באנר תחתון (728×90) - לפני האודות</option>
-          </select>
-        </div>
-
-        <div class="admin-section">
-          <label class="admin-label">קוד הפרסומת (HTML / AdSense / Custom):</label>
-          <textarea id="adHtmlInput" class="admin-input admin-textarea" rows="6" placeholder='&lt;script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"&gt;&lt;/script&gt;
-&lt;ins class="adsbygoogle" ... &gt;&lt;/ins&gt;
-או
-&lt;a href="..."&gt;&lt;img src="..." /&gt;&lt;/a&gt;'></textarea>
-        </div>
-
-        <div class="admin-section admin-checkbox-row">
-          <label><input type="checkbox" id="adEnabled"> פעיל (הצג פרסומת זו באתר)</label>
-        </div>
-
-        <div class="admin-actions">
-          <button class="admin-save" id="saveAd">💾 שמור פרסומת</button>
-          <button class="admin-delete" id="deleteAd">🗑️ הסר</button>
-          <button class="admin-preview" id="previewAds">👁️ תצוגה מקדימה</button>
-        </div>
-
-        <div class="admin-section">
-          <h4>📋 סטטוס פרסומות נוכחי:</h4>
-          <div id="adsStatus" class="admin-status"></div>
-        </div>
-      </div>
-
-      <!-- ANALYTICS TAB -->
-      <div class="admin-pane" data-pane="analytics" hidden>
-        <p class="modal-intro">חבר את האתר ל-Google Analytics 4 כדי לקבל סטטיסטיקות מפורטות על המבקרים, התנהגות, מקורות, ועוד.</p>
-
-        <div class="admin-section">
-          <label class="admin-label">Google Analytics 4 Measurement ID:</label>
-          <input type="text" id="ga4IdInput" class="admin-input" placeholder="G-XXXXXXXXXX" dir="ltr">
-          <p class="admin-hint">איך משיגים? <a href="https://analytics.google.com" target="_blank">analytics.google.com</a> → צור property → קח את ה-Measurement ID</p>
-        </div>
-
-        <div class="admin-section">
-          <label><input type="checkbox" id="ga4Enabled"> הפעל מעקב (יטען את GA4 בכל טעינת דף)</label>
-        </div>
-
-        <div class="admin-actions">
-          <button class="admin-save" id="saveGa4">💾 שמור והפעל</button>
-        </div>
-
-        <div class="admin-section admin-info-box">
-          <h4>🎯 אירועים שנמדדים אוטומטית:</h4>
-          <ul style="font-size:0.85rem; line-height:1.7; padding-right:20px;">
-            <li><code>page_view</code> - כל טעינת דף</li>
-            <li><code>beach_selected</code> - לחיצה על חוף</li>
-            <li><code>sport_changed</code> - החלפת ספורט</li>
-            <li><code>day_drill_in</code> - לחיצה על יום בתחזית</li>
-            <li><code>match_finder_search</code> - שימוש בכלי ההתאמה</li>
-            <li><code>glossary_open</code> - פתיחת מילון</li>
-            <li><code>iolr_link_click</code> - לחיצה על קישור לבויה</li>
-            <li><code>theme_change</code> - החלפת מראה</li>
-            <li><code>camera_view</code> - צפייה במצלמת חוף</li>
-            <li><code>ad_click</code> - לחיצה על פרסומת</li>
-          </ul>
-        </div>
-
-        <h4 style="margin-top:24px;">🔗 חלופות מומלצות (פרטיות יותר):</h4>
-        <ul style="font-size:0.88rem; line-height:1.6;">
-          <li><strong>Cloudflare Web Analytics</strong> - חינם, פרטיות-first, ללא cookies</li>
-          <li><strong>Plausible</strong> - $9/חודש, GDPR-friendly</li>
-          <li><strong>Umami</strong> - חינם (self-hosted)</li>
-          <li><strong>Simple Analytics</strong> - $19/חודש, פרטיות מלאה</li>
-        </ul>
-      </div>
-
-      <!-- STATS TAB (in-app event log) -->
-      <div class="admin-pane" data-pane="stats" hidden>
-        <p class="modal-intro">סטטיסטיקות בסיסיות מבוססות על פעילות בסשן הנוכחי. סטטיסטיקות מצטברות זמינות בלוח GA4.</p>
-
-        <div id="liveStats" class="admin-stats-grid"></div>
-
-        <h4 style="margin-top:24px;">📋 לוג אירועים (סשן נוכחי):</h4>
-        <div id="eventLog" class="admin-event-log"></div>
-
-        <button class="admin-save" id="exportStats" style="margin-top:14px;">⬇️ ייצא לוג ל-CSV</button>
-        <button class="admin-delete" id="clearLog" style="margin-top:14px;">🧹 נקה לוג</button>
-      </div>
-    </div>
-  </div>
-</div>
+<!-- Admin panel removed from public site — moved to /admin/ (HTTP Basic Auth protected) -->
 
 <!-- Ad slots are populated dynamically by JS -->
 
@@ -3167,7 +4624,152 @@ function projectToSvg(lat, lng) {
 /* =========================================================
    4. Build map dots & labels
    ========================================================= */
+/* =========================================================
+   V3 — Real Leaflet map. Replaces the hand-drawn SVG.
+   Two tile layers (Streets + Satellite) with toggle.
+   Custom beach markers with score colors.
+   ========================================================= */
+let leafletMap = null;
+const beachMarkers = {};
+
+function initLeafletMap() {
+  if (typeof L === 'undefined') {
+    console.error('Leaflet not loaded');
+    return;
+  }
+
+  // Center on Israeli coast — slightly inland, zoom shows whole country
+  leafletMap = L.map('leafletMap', {
+    center: [32.10, 34.85],
+    zoom: 8,
+    minZoom: 7,
+    maxZoom: 14,
+    zoomControl: true,
+    attributionControl: true,
+  });
+
+  // Tile strategy: a NO-LABELS basemap so we control the typography entirely
+  // and avoid Arabic clutter. Then we overlay our own Hebrew labels for
+  // major cities. CARTO Voyager No-Labels gives a beautiful, neutral base.
+  // Data: OpenStreetMap (ODbL). Tiles styled by CARTO (CC-BY).
+  const streetsLayer = L.tileLayer(
+    'https://{s}.basemaps.cartocdn.com/rastertiles/voyager_nolabels/{z}/{x}/{y}{r}.png',
+    {
+      attribution: '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors · © <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>',
+      subdomains: 'abcd',
+      maxZoom: 19
+    }
+  );
+
+  streetsLayer.addTo(leafletMap);
+
+  // === City labels (Hebrew) ===
+  const CITIES = [
+    // Major coastal cities
+    { name: 'תל אביב',  lat: 32.085, lng: 34.781, major: true },
+    { name: 'חיפה',     lat: 32.794, lng: 34.989, major: true },
+    { name: 'ירושלים',   lat: 31.778, lng: 35.235, major: true },
+    { name: 'אשדוד',    lat: 31.802, lng: 34.640, major: true },
+    { name: 'אשקלון',   lat: 31.667, lng: 34.572, major: true },
+    { name: 'אילת',     lat: 29.553, lng: 34.952, major: true },
+    // Secondary coastal towns
+    { name: 'נתניה',    lat: 32.330, lng: 34.857 },
+    { name: 'הרצליה',   lat: 32.166, lng: 34.843 },
+    { name: 'נהריה',    lat: 33.011, lng: 35.099 },
+    { name: 'עכו',      lat: 32.928, lng: 35.082 },
+    { name: 'קיסריה',   lat: 32.500, lng: 34.901 },
+    { name: 'בת ים',    lat: 32.018, lng: 34.745 },
+    { name: 'ראשון לציון', lat: 31.962, lng: 34.806 },
+    { name: 'באר שבע',   lat: 31.252, lng: 34.791 },
+    { name: 'טבריה',     lat: 32.793, lng: 35.531 },
+    { name: 'צפת',       lat: 32.965, lng: 35.495 },
+  ];
+
+  CITIES.forEach(city => {
+    const icon = L.divIcon({
+      className: '',
+      html: `<div class="city-label${city.major ? ' major' : ''}">${city.name}</div>`,
+      iconSize: [80, 20],
+      iconAnchor: [40, 10]
+    });
+    L.marker([city.lat, city.lng], { icon, interactive: false, keyboard: false })
+      .addTo(leafletMap);
+  });
+
+  // Build markers for each beach
+  BEACHES.forEach(beach => {
+    const score = null; // will be filled later via refreshAllDotColors
+    const marker = createBeachMarker(beach, score);
+    marker.addTo(leafletMap);
+    beachMarkers[beach.id] = marker;
+  });
+
+  // Adjust bounds to fit all beaches with some padding
+  const group = L.featureGroup(Object.values(beachMarkers));
+  leafletMap.fitBounds(group.getBounds().pad(0.15));
+}
+
+function createBeachMarker(beach, score) {
+  const color = score == null ? '#94A3B8' : scoreColor(score);
+  const scoreText = score == null ? '—' : score;
+
+  const html = `<div class="beach-marker" data-id="${beach.id}"
+                style="border-color:${color};">${scoreText}</div>`;
+
+  const icon = L.divIcon({
+    className: 'beach-marker-wrapper',
+    html: html,
+    iconSize: [36, 36],
+    iconAnchor: [18, 18],
+  });
+
+  const marker = L.marker([beach.lat, beach.lng], {
+    icon: icon,
+    title: beach.name,
+    riseOnHover: true
+  });
+
+  marker.beach = beach;
+
+  marker.on('click', () => onBeachSelect(beach));
+
+  marker.on('mouseover', () => {
+    const data = dataCache.get(beach.id);
+    if (data) {
+      const sport = SPORTS[currentSport];
+      const sc = scoreSport(data.current, currentSport, beach);
+      marker.bindPopup(buildPopupHtml(beach, data, sc, sport)).openPopup();
+    } else {
+      marker.bindPopup(`<div class="bp-name">${beach.name}</div><div>טוען נתונים…</div>`).openPopup();
+    }
+  });
+
+  return marker;
+}
+
+function buildPopupHtml(beach, data, score, sport) {
+  const c = data.current;
+  const scoreClr = scoreColor(score);
+  return `
+    <div class="bp-name">${beach.name}</div>
+    <div class="bp-score-row">
+      <span class="bp-score" style="color:${scoreClr}">${score ?? '—'}</span>
+      <span class="bp-score-label">${sport.icon} ${sport.name}</span>
+    </div>
+    <div class="bp-stats">
+      <span>💨 ${fmt(c.windSpeed, 0)}kn</span>
+      <span>🌊 ${fmt(c.waveHeight)}m</span>
+      <span>🌡️ ${fmt(c.seaTemp)}°</span>
+    </div>
+    <button class="bp-cta" onclick="(function(){var b=BEACHES.find(x=>x.id==='${beach.id}'); if(b)onBeachSelect(b);})()">לחץ לתחזית מלאה ←</button>
+  `;
+}
+
 function buildMap() {
+  // V3: Leaflet replaces SVG. SVG layers kept hidden for compat.
+  initLeafletMap();
+  return; // skip the legacy SVG dot building
+
   const beachLayer = document.getElementById('beachLayer');
   const labelLayer = document.getElementById('labelLayer');
 
@@ -3312,17 +4914,17 @@ function buildBuoys() {
   });
 }
 
-// Show / hide beach dots based on whether the sport is relevant for them
+// Show / hide beach markers based on whether the sport is relevant
 function applySportVisibility() {
   BEACHES.forEach(beach => {
     const relevant = isBeachRelevantForSport(beach, currentSport);
-    const dot = document.querySelector(`.beach-dot[data-id="${beach.id}"]`);
-    const label = document.querySelector(`.beach-label[data-id="${beach.id}"]`);
-    if (dot) dot.style.display = relevant ? '' : 'none';
-    if (label && !relevant) label.style.display = 'none';
-    else if (label && relevant) {
-      const proj = projectToSvg(beach.lat, beach.lng);
-      label.style.display = proj.isLake ? 'none' : '';
+    const marker = beachMarkers[beach.id];
+    if (marker) {
+      if (relevant && !leafletMap.hasLayer(marker)) {
+        marker.addTo(leafletMap);
+      } else if (!relevant && leafletMap.hasLayer(marker)) {
+        leafletMap.removeLayer(marker);
+      }
     }
   });
 }
@@ -3342,6 +4944,7 @@ function buildSportSelector() {
     btn.addEventListener('click', () => {
       currentSport = id;
       trackEvent('sport_changed', { sport: id });
+      if (typeof updateHeroMood === 'function') updateHeroMood();
       document.querySelectorAll('.sport-btn').forEach(b => {
         const isActive = b.dataset.sport === id;
         b.classList.toggle('active', isActive);
@@ -3353,6 +4956,8 @@ function buildSportSelector() {
       if (selectedBeachId) {
         const beach = BEACHES.find(b => b.id === selectedBeachId);
         renderBeachInfo(beach);
+      } else {
+        renderSmartEmpty();
       }
       // Scroll back to top so user sees the updated map / sidebar
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -3764,9 +5369,12 @@ function renderTooltipFromData(beach, data) {
 async function onBeachSelect(beach) {
   selectedBeachId = beach.id;
   openDayIdx = null;
-  document.querySelectorAll('.beach-dot').forEach(d => {
-    d.classList.toggle('selected', d.getAttribute('data-id') === beach.id);
-  });
+  // Refresh leaflet markers so the selected one gets the "selected" class
+  refreshAllDotColors();
+  // Pan the map to the selected beach
+  if (leafletMap && beachMarkers[beach.id]) {
+    leafletMap.panTo([beach.lat, beach.lng], { animate: true, duration: 0.6 });
+  }
   renderTopBeaches();
   trackEvent('beach_selected', { beach_id: beach.id, beach_name: beach.name, sport: currentSport });
   await renderBeachInfo(beach);
@@ -3881,23 +5489,24 @@ async function renderBeachInfo(beach) {
   `;
 
   data.daily.forEach((d, i) => {
-    const dailyConditions = {
-      windSpeed: d.windMax,
-      windGusts: d.windGusts,
-      windDir:   d.windDir,
-      waveHeight: d.waveMax,
-      wavePeriod: d.wavePeriod
-    };
-    const dScore = scoreSport(dailyConditions, currentSport, beach);
+    // Use the BEST hour within the surf window (06:00-17:00) for the score —
+    // that matches what users see when they drill in. Daily max wind/wave
+    // can occur at different hours, producing inflated scores that don't
+    // appear anywhere in the hourly breakdown.
+    const bestHour = getBestHourInWindow(data, i, beach, currentSport);
+    const dScore = bestHour ? bestHour.score : null;
     const conf = d.confidence ?? CONFIDENCE_BY_DAY[i] ?? 40;
     const isOpen = (openDayIdx === i);
     const ensTag = d.ensembleSpread ? '🎯' : '~';
+    // Show conditions of the best hour (matches the score)
+    const sumWave = bestHour ? bestHour.hour.waveHeight : d.waveMax;
+    const sumWind = bestHour ? bestHour.hour.windSpeed : d.windMax;
     html += `
       <div class="day ${isOpen ? 'open' : ''}" data-day="${i}">
         <div class="dow">יום ${dowHeb(d.date)}</div>
         <div class="date">${shortDate(d.date)}</div>
         <div class="day-score" style="color:${scoreColor(dScore)}">${dScore ?? '—'}</div>
-        <div class="summary">${fmt(d.waveMax)}מ׳ · ${fmt(d.windMax, 0)}kn</div>
+        <div class="summary">${fmt(sumWave)}מ׳ · ${fmt(sumWind, 0)}kn</div>
         <div class="conf">${ensTag} ודאות ${conf}%</div>
         <div class="conf-bar"><div style="width:${conf}%"></div></div>
       </div>
@@ -3909,16 +5518,16 @@ async function renderBeachInfo(beach) {
     <div id="dayDetailContainer"></div>
   `;
 
-  // Best day suggestion
-  const dayScores = data.daily.map((d, i) => ({
-    i,
-    score: scoreSport({
-      windSpeed: d.windMax, windGusts: d.windGusts, windDir: d.windDir,
-      waveHeight: d.waveMax, wavePeriod: d.wavePeriod
-    }, currentSport, beach),
-    date: d.date,
-    conf: CONFIDENCE_BY_DAY[i] ?? 40
-  })).filter(x => x.score != null);
+  // Best day suggestion - based on best hourly score within surf window
+  const dayScores = data.daily.map((d, i) => {
+    const result = getBestHourInWindow(data, i, beach, currentSport);
+    return {
+      i,
+      score: result ? result.score : null,
+      date: d.date,
+      conf: d.confidence ?? CONFIDENCE_BY_DAY[i] ?? 40
+    };
+  }).filter(x => x.score != null);
   const bestDay = dayScores.sort((a, b) => b.score - a.score)[0];
   if (bestDay) {
     html += `
@@ -4175,11 +5784,11 @@ function showDayTooltip(e, beach, data, idx) {
   const day = data.daily[idx];
   const sport = SPORTS[currentSport];
 
-  const dailyConditions = {
-    windSpeed: day.windMax, windGusts: day.windGusts, windDir: day.windDir,
-    waveHeight: day.waveMax, wavePeriod: day.wavePeriod
-  };
-  const score = scoreSport(dailyConditions, currentSport, beach);
+  // Use the best hour within the surf window — same scoring logic as the
+  // day cards. Otherwise hover-tooltip would show a different score than
+  // what the card shows.
+  const bestHour = getBestHourInWindow(data, idx, beach, currentSport);
+  const score = bestHour ? bestHour.score : null;
   const conf  = day.confidence ?? CONFIDENCE_BY_DAY[idx] ?? 40;
   const dt = new Date(day.date);
   const dow = HEB_DOW[dt.getDay()];
@@ -4280,13 +5889,57 @@ function renderCameraSection(beach) {
    13. Refresh dot colors
    ========================================================= */
 function refreshAllDotColors() {
+  // Find top scoring beach to mark with pulse animation
+  let topId = null, topScore = -1;
   for (const beach of BEACHES) {
-    if (dataCache.has(beach.id)) {
-      const data = dataCache.get(beach.id);
-      const score = scoreSport(data.current, currentSport, beach);
-      const dot = document.querySelector(`.beach-dot[data-id="${beach.id}"]`);
-      if (dot) dot.setAttribute('fill', scoreColor(score));
+    if (!isBeachRelevantForSport(beach, currentSport)) continue;
+    if (!dataCache.has(beach.id)) continue;
+    const data = dataCache.get(beach.id);
+    const score = scoreSport(data.current, currentSport, beach);
+    if (score != null && score > topScore) {
+      topScore = score;
+      topId = beach.id;
     }
+  }
+
+  for (const beach of BEACHES) {
+    if (!dataCache.has(beach.id)) continue;
+    const data = dataCache.get(beach.id);
+    const score = scoreSport(data.current, currentSport, beach);
+    const marker = beachMarkers[beach.id];
+    if (!marker) continue;
+
+    const color = scoreColor(score);
+    const scoreText = score == null ? '—' : score;
+    const isSelected = (beach.id === selectedBeachId);
+    const isTop = (beach.id === topId);
+
+    // Wind direction & speed for animated arrow
+    const windDir = data.current.windDir;
+    const windSpeed = data.current.windSpeed ?? 0;
+    let windClass = 'wind-light';
+    if (windSpeed >= 18) windClass = 'wind-strong';
+    else if (windSpeed >= 10) windClass = 'wind-medium';
+    // Arrow rotated by windDir (wind COMES FROM this direction)
+    // Tail at top (where wind comes from), head at center
+    const arrow = windDir != null ? `
+      <div class="wind-arrow ${windClass}" style="transform: rotate(${windDir}deg);">
+        <svg viewBox="0 0 32 32">
+          <line class="arrow-tail" x1="16" y1="2" x2="16" y2="16"/>
+          <polygon class="arrow-head" points="16,16 12,10 20,10"/>
+        </svg>
+      </div>
+    ` : '';
+
+    const html = `${arrow}<div class="beach-marker${isSelected ? ' selected' : ''}${isTop ? ' top-pick' : ''}"
+                  data-id="${beach.id}" style="border-color:${color};">${scoreText}</div>`;
+
+    marker.setIcon(L.divIcon({
+      className: 'beach-marker-wrapper',
+      html: html,
+      iconSize: [22, 22],
+      iconAnchor: [11, 11],
+    }));
   }
 }
 
@@ -4412,8 +6065,97 @@ async function preloadAll() {
   applySportVisibility();
   refreshAllDotColors();
   renderTopBeaches();
+  renderSmartEmpty();
   document.getElementById('lastUpdate').textContent =
     'Data updated: ' + new Date().toLocaleString('he-IL');
+}
+
+/* =========================================================
+   Smart Empty State — Today's top pick
+   Shown when no beach is selected. Calculates the best beach
+   for today's surfing window and displays it as a CTA card,
+   with 3 runner-ups for context.
+   ========================================================= */
+function renderSmartEmpty() {
+  const el = document.getElementById('seTopPick');
+  if (!el) return; // info panel currently shows beach detail
+  if (selectedBeachId) return; // user already selected a beach
+
+  const sport = SPORTS[currentSport];
+  const today = 0; // dayIdx 0 = today
+
+  // Find top 4 beaches for today's surfing window
+  const candidates = [];
+  for (const beach of BEACHES) {
+    if (!isBeachRelevantForSport(beach, currentSport)) continue;
+    const data = dataCache.get(beach.id);
+    const result = getBestHourInWindow(data, today, beach, currentSport);
+    if (!result) continue;
+    candidates.push({ beach, result, day: data.daily[today] });
+  }
+  candidates.sort((a, b) => b.result.score - a.result.score);
+
+  if (candidates.length === 0) {
+    el.innerHTML = '<div class="se-loading">אין נתונים זמינים כרגע</div>';
+    return;
+  }
+
+  const top = candidates[0];
+  const others = candidates.slice(1, 4);
+  const hourLabel = top.result.hour.time.split('T')[1].substring(0, 5);
+  const scoreClr = scoreColor(top.result.score);
+  const message = top.result.score >= 75
+    ? 'תנאים מצוינים! 🤙' :
+    top.result.score >= 60 ? 'תנאים טובים' :
+    top.result.score >= 45 ? 'תנאים סבירים' :
+    'יום שקט';
+
+  let html = `
+    <div class="se-pick-card" data-beach="${top.beach.id}" role="button" tabindex="0"
+         aria-label="הכי טוב היום: ${top.beach.name}">
+      <div class="se-pick-medal">🥇</div>
+      <div class="se-pick-name">${top.beach.name}</div>
+      <div class="se-pick-score" style="color:${scoreClr}">${top.result.score}<span style="font-size:1.2rem; opacity:0.5;">/100</span></div>
+      <div style="font-weight:600; color:var(--sea-darker); margin-bottom:4px;">${message}</div>
+      <div class="se-pick-time">⏰ הזמן הטוב: <strong>${hourLabel}</strong></div>
+      <div class="se-pick-stats">
+        <span>💨 ${fmt(top.result.hour.windSpeed, 0)}kn ${dirToText(top.result.hour.windDir)}</span>
+        <span>🌊 ${fmt(top.result.hour.waveHeight)}m</span>
+        ${top.result.hour.airTemp != null ? `<span>🌡️ ${fmt(top.result.hour.airTemp, 0)}°</span>` : ''}
+      </div>
+      <div class="se-pick-cta">לחץ לפרטים מלאים ←</div>
+    </div>
+  `;
+
+  if (others.length > 0) {
+    html += `
+      <div class="se-runner-ups">
+        <div class="se-runner-ups-title">גם טובים היום:</div>
+        ${others.map(r => `
+          <div class="se-runner-up" data-beach="${r.beach.id}" role="button" tabindex="0">
+            <span class="se-ru-name">${r.beach.name}</span>
+            <span class="se-ru-score" style="background:${scoreColor(r.result.score)}">${r.result.score}</span>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  el.innerHTML = html;
+
+  // Wire up clicks on cards
+  el.querySelectorAll('[data-beach]').forEach(card => {
+    const beachId = card.dataset.beach;
+    const beach = BEACHES.find(b => b.id === beachId);
+    if (!beach) return;
+    card.addEventListener('click', () => onBeachSelect(beach));
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        onBeachSelect(beach);
+      }
+    });
+  });
 }
 
 /* =========================================================
@@ -4574,10 +6316,9 @@ function runMatchSearch() {
     data.daily.forEach((day, idx) => {
       const matchScore = calculateMatch(day, beach, matchPrefs);
       if (matchScore == null) return;
-      const sportScore = scoreSport({
-        windSpeed: day.windMax, windGusts: day.windGusts, windDir: day.windDir,
-        waveHeight: day.waveMax, wavePeriod: day.wavePeriod
-      }, matchPrefs.sport, beach);
+      // Sport score = best hour within surf window (consistent with card display)
+      const bestHour = getBestHourInWindow(data, idx, beach, matchPrefs.sport);
+      const sportScore = bestHour ? bestHour.score : null;
       results.push({ beach, day, idx, matchScore, sportScore });
     });
   }
@@ -4953,13 +6694,23 @@ function setupSourcesModal() {
 const eventLog = [];
 
 function trackEvent(eventName, params = {}) {
-  // Local log (always)
-  eventLog.push({
+  const evt = {
     name: eventName,
     params,
     ts: new Date().toISOString()
-  });
-  if (eventLog.length > 500) eventLog.shift(); // cap at 500
+  };
+
+  // Local in-memory log
+  eventLog.push(evt);
+  if (eventLog.length > 500) eventLog.shift();
+
+  // Persist to localStorage so admin panel can read it
+  try {
+    let stored = JSON.parse(localStorage.getItem('seaforecast-events') || '[]');
+    stored.push(evt);
+    if (stored.length > 500) stored = stored.slice(-500);
+    localStorage.setItem('seaforecast-events', JSON.stringify(stored));
+  } catch (e) {}
 
   // Send to GA4 if loaded
   if (window.gtag) {
@@ -5042,214 +6793,11 @@ function renderAds() {
 }
 
 /* =========================================================
-   17e. Setup Admin Panel
+   17e. Setup Admin Panel — REMOVED FROM PUBLIC SITE
+   The admin UI now lives in the protected /admin/ directory.
+   This site only READS the localStorage config that admin sets.
+   No admin code, no secret URL, no exposed credentials.
    ========================================================= */
-function setupAdminPanel() {
-  // Admin mode requires the secret in URL EVERY time. No persistence in
-  // localStorage — that prevents curious visitors who saw ?admin=... once
-  // from continuing to see the admin button. Replace ADMIN_SECRET below
-  // with a long random string before deploying.
-  const ADMIN_SECRET = 'a8328f782fde2ecdb4f674ec831021fe305041ce939251e5';
-  const urlParams = new URLSearchParams(window.location.search);
-  const adminMode = urlParams.get('admin') === ADMIN_SECRET;
-
-  if (!adminMode) return; // Don't wire up admin if not in admin mode
-
-  document.getElementById('adminButton').hidden = false;
-
-  const modal = document.getElementById('adminModal');
-  const openBtn = document.getElementById('adminButton');
-  const closeBtn = document.getElementById('closeAdmin');
-
-  openBtn.addEventListener('click', () => {
-    modal.hidden = false;
-    document.body.style.overflow = 'hidden';
-    refreshAdminUI();
-  });
-  closeBtn.addEventListener('click', () => {
-    modal.hidden = true;
-    document.body.style.overflow = '';
-  });
-  modal.addEventListener('click', e => {
-    if (e.target === modal) {
-      modal.hidden = true;
-      document.body.style.overflow = '';
-    }
-  });
-
-  // Tabs
-  document.querySelectorAll('.admin-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-      const target = tab.dataset.tab;
-      document.querySelectorAll('.admin-tab').forEach(t =>
-        t.classList.toggle('active', t === tab));
-      document.querySelectorAll('.admin-pane').forEach(p =>
-        p.hidden = (p.dataset.pane !== target));
-      if (target === 'stats') refreshAdminStats();
-    });
-  });
-
-  // === Ads management ===
-  const adSlot = document.getElementById('adSlotSelect');
-  const adHtml = document.getElementById('adHtmlInput');
-  const adEnabled = document.getElementById('adEnabled');
-
-  adSlot.addEventListener('change', () => loadAdSlotEditor());
-  loadAdSlotEditor();
-
-  function loadAdSlotEditor() {
-    const config = loadAdminConfig();
-    const ads = config.ads || {};
-    const ad = ads[adSlot.value] || {};
-    adHtml.value = ad.html || '';
-    adEnabled.checked = ad.enabled || false;
-  }
-
-  document.getElementById('saveAd').addEventListener('click', () => {
-    const config = loadAdminConfig();
-    config.ads = config.ads || {};
-    config.ads[adSlot.value] = {
-      html: adHtml.value,
-      enabled: adEnabled.checked
-    };
-    saveAdminConfig(config);
-    renderAds();
-    refreshAdsStatus();
-    alert('הפרסומת נשמרה ✓');
-  });
-
-  document.getElementById('deleteAd').addEventListener('click', () => {
-    if (!confirm('להסיר את הפרסומת ממיקום זה?')) return;
-    const config = loadAdminConfig();
-    if (config.ads) {
-      delete config.ads[adSlot.value];
-      saveAdminConfig(config);
-    }
-    loadAdSlotEditor();
-    renderAds();
-    refreshAdsStatus();
-  });
-
-  document.getElementById('previewAds').addEventListener('click', () => {
-    renderAds();
-    modal.hidden = true;
-    document.body.style.overflow = '';
-  });
-
-  refreshAdsStatus();
-
-  function refreshAdsStatus() {
-    const config = loadAdminConfig();
-    const ads = config.ads || {};
-    const slots = ['header', 'sidebar', 'beach-info', 'footer'];
-    const labels = {
-      'header': 'באנר עליון',
-      'sidebar': 'סיידבר',
-      'beach-info': 'פאנל חוף',
-      'footer': 'באנר תחתון'
-    };
-    document.getElementById('adsStatus').innerHTML = slots.map(s => {
-      const ad = ads[s];
-      const status = ad?.enabled ? '✅ פעיל' : ad ? '⏸️ מוגדר אך מבוטל' : '⚪ ריק';
-      return `<div class="admin-status-row"><span>${labels[s]}</span><span>${status}</span></div>`;
-    }).join('');
-  }
-
-  // === GA4 setup ===
-  const ga4Input = document.getElementById('ga4IdInput');
-  const ga4Enabled = document.getElementById('ga4Enabled');
-  const config = loadAdminConfig();
-  ga4Input.value = config.ga4Id || '';
-  ga4Enabled.checked = config.ga4Enabled || false;
-
-  document.getElementById('saveGa4').addEventListener('click', () => {
-    const c = loadAdminConfig();
-    c.ga4Id = ga4Input.value.trim();
-    c.ga4Enabled = ga4Enabled.checked;
-    saveAdminConfig(c);
-    alert('שמור ✓ — האתר יטען את GA4 בטעינה הבאה');
-  });
-
-  // === Stats tab ===
-  document.getElementById('clearLog').addEventListener('click', () => {
-    eventLog.length = 0;
-    refreshAdminStats();
-  });
-
-  document.getElementById('exportStats').addEventListener('click', () => {
-    const csv = 'event,timestamp,params\n' + eventLog.map(e =>
-      `"${e.name}","${e.ts}","${JSON.stringify(e.params).replace(/"/g, '""')}"`
-    ).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `event-log-${new Date().toISOString().split('T')[0]}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-  });
-}
-
-function refreshAdminUI() {
-  refreshAdminStats();
-}
-
-function refreshAdminStats() {
-  const stats = {
-    total_events: eventLog.length,
-    beaches_viewed: new Set(eventLog.filter(e => e.name === 'beach_selected').map(e => e.params.beach_id)).size,
-    sport_changes: eventLog.filter(e => e.name === 'sport_changed').length,
-    drill_ins: eventLog.filter(e => e.name === 'day_drill_in').length,
-    matcher_searches: eventLog.filter(e => e.name === 'match_finder_search').length,
-    iolr_clicks: eventLog.filter(e => e.name === 'iolr_link_click').length,
-  };
-
-  const labels = {
-    total_events: 'אירועים סה"כ',
-    beaches_viewed: 'חופים שנצפו',
-    sport_changes: 'החלפות ספורט',
-    drill_ins: 'צלילות לתחזית',
-    matcher_searches: 'חיפושי התאמה',
-    iolr_clicks: 'קליקים לבויות'
-  };
-
-  const grid = document.getElementById('liveStats');
-  if (grid) {
-    grid.innerHTML = Object.entries(stats).map(([key, val]) => `
-      <div class="admin-stat-card">
-        <div class="stat-num">${val}</div>
-        <div class="stat-label">${labels[key]}</div>
-      </div>
-    `).join('');
-  }
-
-  const log = document.getElementById('eventLog');
-  if (log) {
-    // Build using DOM API to safely escape user-influenced strings (e.g. referrer)
-    log.innerHTML = '';
-    eventLog.slice(-30).reverse().forEach(e => {
-      const line = document.createElement('div');
-      line.className = 'ev-line';
-
-      const timeSpan = document.createElement('span');
-      timeSpan.className = 'ev-time';
-      timeSpan.textContent = e.ts.split('T')[1].split('.')[0];
-
-      const nameSpan = document.createElement('span');
-      nameSpan.className = 'ev-name';
-      nameSpan.textContent = ` [${e.name}] `;
-
-      const dataSpan = document.createElement('span');
-      dataSpan.className = 'ev-data';
-      dataSpan.textContent = JSON.stringify(e.params);
-
-      line.appendChild(timeSpan);
-      line.appendChild(nameSpan);
-      line.appendChild(dataSpan);
-      log.appendChild(line);
-    });
-  }
-}
 
 /* =========================================================
    17f. Legal Modal (Terms / Privacy / Copyright)
@@ -5631,6 +7179,78 @@ if (copyYearEl) copyYearEl.textContent = new Date().getFullYear();
 // Track that the app loaded
 trackEvent('page_view', { url: window.location.pathname });
 
+/* =========================================================
+   V3 — Dynamic hero: changes mood by time of day + sport
+   ========================================================= */
+function getTimeOfDay() {
+  const h = new Date().getHours();
+  if (h >= 5 && h < 7)   return 'dawn';
+  if (h >= 7 && h < 11)  return 'morning';
+  if (h >= 11 && h < 16) return 'day';
+  if (h >= 16 && h < 19) return 'sunset';
+  return 'night';
+}
+function updateHeroMood() {
+  const hero = document.querySelector('.hero');
+  if (!hero) return;
+  hero.setAttribute('data-time', getTimeOfDay());
+  hero.setAttribute('data-sport', currentSport);
+}
+// Update once on load, then every minute to catch time-of-day transitions
+updateHeroMood();
+setInterval(updateHeroMood, 60000);
+
+/* =========================================================
+   V3 — Counter animations + Card tilt micro-interactions
+   ========================================================= */
+function animateCounter(el, target, duration = 1500) {
+  const start = parseInt(el.textContent || '0');
+  const startTime = performance.now();
+  function step(now) {
+    const t = Math.min(1, (now - startTime) / duration);
+    const eased = 1 - Math.pow(1 - t, 3); // ease-out cubic
+    el.textContent = Math.round(start + (target - start) * eased);
+    if (t < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+// Trigger hero counter animations after page load
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.querySelectorAll('.hero-stat-num[data-target]').forEach(el => {
+      const target = parseInt(el.dataset.target);
+      animateCounter(el, target, 1800);
+    });
+  }, 1500);
+});
+
+// 3D tilt effect on cards
+function setupCardTilts() {
+  const cards = document.querySelectorAll('.tb-day, .se-pick-card, .day, .compass-card');
+  cards.forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const cx = rect.width / 2;
+      const cy = rect.height / 2;
+      const rx = ((y - cy) / cy) * -3;
+      const ry = ((x - cx) / cx) * 3;
+      card.style.transform = `perspective(800px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-2px)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = '';
+    });
+  });
+}
+// Re-run after each render
+const origRenderTopBeaches = renderTopBeaches;
+renderTopBeaches = function() {
+  origRenderTopBeaches();
+  setupCardTilts();
+};
+
 setupThemeToggle();
 buildSportSelector();
 buildMap();
@@ -5640,7 +7260,7 @@ setupGlossary();
 setupSourcesModal();
 setupLegalModal();
 setupCookieBanner();
-setupAdminPanel();
+// setupAdminPanel() removed — admin moved to /admin/ (HTTP Basic Auth)
 renderAds();
 
 // Load GA4 only if user has accepted cookies
