@@ -789,6 +789,16 @@
     display: inline-flex !important;
     border: 1px solid rgba(255, 255, 255, 0.15);
     gap: 4px !important;
+    transition: box-shadow 0.3s, transform 0.3s;
+  }
+  .sport-selector--pulse {
+    animation: sportPulse 1.2s ease-out;
+    box-shadow: 0 0 0 4px rgba(255, 217, 61, 0.35), 0 0 30px rgba(255, 217, 61, 0.55);
+  }
+  @keyframes sportPulse {
+    0%   { box-shadow: 0 0 0 0 rgba(255, 217, 61, 0.6); transform: scale(1); }
+    40%  { box-shadow: 0 0 0 10px rgba(255, 217, 61, 0); transform: scale(1.04); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 217, 61, 0); transform: scale(1); }
   }
   .sport-btn {
     background: transparent !important;
@@ -835,6 +845,212 @@
   }
   header h1, header .subtitle {
     display: none;
+  }
+
+  /* === Home Beach Summary Card — sits INSIDE the hero, below stats ===
+     Subtle glass-on-hero design: dark translucent surface + light text,
+     so it integrates with the hero artwork without overpowering it. */
+  .home-summary {
+    position: relative;
+    z-index: 5;
+    max-width: 760px;
+    margin: 22px auto 0;
+    padding: 0;
+    animation: hsFadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.5s backwards;
+  }
+  @keyframes hsFadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .home-summary[hidden] { display: none; }
+
+  .hs-inner {
+    background: rgba(15, 32, 48, 0.32);
+    backdrop-filter: blur(18px) saturate(150%);
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 18px;
+    padding: 14px 18px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    color: #fff;
+  }
+  .hs-left {
+    flex: 1;
+    min-width: 180px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    text-align: right;
+  }
+  .hs-eyebrow {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.78);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .hs-eyebrow .hs-sport-tag {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 0.66rem;
+    text-transform: none;
+    letter-spacing: 0;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+  }
+  .hs-beach-name {
+    font-family: 'Rubik', sans-serif;
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.15;
+    margin-top: 2px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+  }
+  .hs-message {
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.82);
+    font-weight: 500;
+  }
+
+  .hs-score {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 14px;
+    border-left: 1px solid rgba(255, 255, 255, 0.18);
+    border-right: 1px solid rgba(255, 255, 255, 0.18);
+  }
+  .hs-score-num {
+    font-family: 'Rubik', sans-serif;
+    font-size: 2.4rem;
+    font-weight: 900;
+    line-height: 1;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  .hs-score-of {
+    font-size: 0.66rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-top: 2px;
+  }
+  .hs-best-hour {
+    font-family: 'Rubik', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #FFD93D;
+    margin-top: 4px;
+    white-space: nowrap;
+  }
+
+  .hs-stats {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .hs-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 48px;
+  }
+  .hs-stat-val {
+    font-family: 'Rubik', sans-serif;
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: #fff;
+    direction: ltr;
+  }
+  .hs-stat-lbl {
+    font-size: 0.66rem;
+    color: rgba(255, 255, 255, 0.72);
+    margin-top: 1px;
+  }
+
+  .hs-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: stretch;
+  }
+  .hs-cta {
+    background: rgba(255, 255, 255, 0.95);
+    color: #0F4C5C;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-family: 'Heebo', sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.18);
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .hs-cta:hover {
+    transform: translateY(-1px);
+    background: #fff;
+    box-shadow: 0 5px 14px rgba(0,0,0,0.25);
+  }
+  .hs-change-row {
+    display: flex;
+    gap: 6px;
+  }
+  .hs-change {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: rgba(255, 255, 255, 0.9);
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .hs-change:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+  }
+
+  /* "No home beach yet" prompt */
+  .hs-prompt {
+    text-align: center;
+    padding: 10px 14px;
+    width: 100%;
+  }
+  .hs-prompt-icon { font-size: 1.7rem; margin-bottom: 2px; }
+  .hs-prompt-title {
+    font-family: 'Rubik', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 2px;
+  }
+  .hs-prompt-text {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  @media (max-width: 760px) {
+    .home-summary { margin: 16px 12px 0; max-width: 100%; }
+    .hs-inner { padding: 12px 14px; gap: 10px; }
+    .hs-left { min-width: 140px; }
+    .hs-score { padding: 0 10px; }
+    .hs-score-num { font-size: 1.9rem; }
+    .hs-beach-name { font-size: 1.1rem; }
+    .hs-stats { gap: 10px; width: 100%; justify-content: center; }
+    .hs-actions { width: 100%; }
+    .hs-change-row { width: 100%; }
   }
 
   /* === Section cards — glassmorphism === */
@@ -3833,6 +4049,14 @@
         <div class="hero-stat-label">מודלים</div>
       </div>
     </div>
+
+    <!-- Home Beach Summary — sits inside the hero, below the stats.
+         Subtle glass-on-hero design so it doesn't steal the show. -->
+    <section class="home-summary" id="homeSummary" hidden>
+      <div class="hs-inner" id="hsInner">
+        <!-- Populated by JS -->
+      </div>
+    </section>
   </div>
 </header>
 
@@ -5281,6 +5505,7 @@ function buildSportSelector() {
       applySportVisibility();
       refreshAllDotColors();
       renderTopBeaches();
+      renderHomeSummary();
       if (typeof window.__rebuildBeachListOnSport === 'function') {
         window.__rebuildBeachListOnSport();
       }
@@ -5703,6 +5928,8 @@ async function onBeachSelect(beach) {
   openDayIdx = null;
   // Refresh leaflet markers so the selected one gets the "selected" class
   refreshAllDotColors();
+  // Update the "home beach" summary card at the top — this is now the user's home
+  renderHomeSummary();
   // Pan the map to the selected beach
   if (leafletMap && beachMarkers[beach.id]) {
     leafletMap.panTo([beach.lat, beach.lng], { animate: true, duration: 0.6 });
@@ -6428,6 +6655,7 @@ async function preloadAll() {
   applySportVisibility();
   refreshAllDotColors();
   renderTopBeaches();
+  renderHomeSummary();
 
   // Restore last-selected beach from previous visit (if any)
   const lastBeachId = getLastBeach();
@@ -6444,6 +6672,137 @@ async function preloadAll() {
 
   document.getElementById('lastUpdate').textContent =
     'Data updated: ' + new Date().toLocaleString('he-IL');
+}
+
+/* =========================================================
+   Home Beach Summary — sticky card under the hero showing
+   current conditions for the user's last-selected beach
+   according to their preferred sport.
+   ========================================================= */
+function renderHomeSummary() {
+  const section = document.getElementById('homeSummary');
+  const inner = document.getElementById('hsInner');
+  if (!section || !inner) return;
+
+  const lastBeachId = getLastBeach();
+
+  // Empty state — no home beach saved
+  if (!lastBeachId) {
+    section.hidden = false;
+    inner.innerHTML = `
+      <div class="hs-prompt">
+        <div class="hs-prompt-icon">🏖️</div>
+        <div class="hs-prompt-title">בחר את חוף הבית שלך</div>
+        <div class="hs-prompt-text">לחץ על חוף במפה כדי לראות סיכום מותאם אישית כאן</div>
+      </div>
+    `;
+    return;
+  }
+
+  const beach = BEACHES.find(b => b.id === lastBeachId);
+  if (!beach) {
+    section.hidden = true;
+    return;
+  }
+  const data = dataCache.get(beach.id);
+  if (!data) {
+    section.hidden = true;
+    return;
+  }
+
+  // Score = best hour in surf window (consistent with rest of app)
+  const bestHour = getBestHourInWindow(data, 0, beach, currentSport);
+  if (!bestHour) {
+    section.hidden = true;
+    return;
+  }
+
+  const sport = SPORTS[currentSport];
+  const score = bestHour.score;
+  const scoreClr = scoreColor(score);
+  const message =
+    score >= 80 ? 'תנאים מצוינים 🤙' :
+    score >= 70 ? 'תנאים טובים' :
+    score >= 55 ? 'תנאים סבירים' :
+    score >= 40 ? 'תנאים בינוניים' :
+    'יום שקט';
+  const hourLabel = bestHour.hour.time.split('T')[1].substring(0, 5);
+
+  // Apply coastal transformation for displayed values
+  const cBeach = applyCoastalTransform(bestHour.hour, beach);
+
+  section.hidden = false;
+  inner.innerHTML = `
+    <div class="hs-left">
+      <div class="hs-eyebrow">
+        🏠 חוף הבית שלך
+        <span class="hs-sport-tag">${sport.icon} ${sport.name}</span>
+      </div>
+      <div class="hs-beach-name">${beach.name}</div>
+      <div class="hs-message">${message}</div>
+    </div>
+
+    <div class="hs-score">
+      <div class="hs-score-num" style="color:${scoreClr}">${score}</div>
+      <div class="hs-score-of">מתוך 100</div>
+      <div class="hs-best-hour">⏰ זמן הזהב: ${hourLabel}</div>
+    </div>
+
+    <div class="hs-stats">
+      <div class="hs-stat">
+        <div class="hs-stat-val">${fmt(cBeach.windSpeed, 0)}kn</div>
+        <div class="hs-stat-lbl">💨 רוח</div>
+      </div>
+      <div class="hs-stat">
+        <div class="hs-stat-val">${fmt(cBeach.waveHeight)}m</div>
+        <div class="hs-stat-lbl">🌊 גלים</div>
+      </div>
+      <div class="hs-stat">
+        <div class="hs-stat-val">${fmt(bestHour.hour.airTemp, 0)}°</div>
+        <div class="hs-stat-lbl">🌡️ אוויר</div>
+      </div>
+    </div>
+
+    <div class="hs-actions">
+      <button class="hs-cta" id="hsViewFull">תחזית מלאה ←</button>
+      <div class="hs-change-row">
+        <button class="hs-change" id="hsChangeSport" title="בחר ספורט אחר">החלף ספורט</button>
+        <button class="hs-change" id="hsClearHome" title="בחר חוף אחר">החלף חוף</button>
+      </div>
+    </div>
+  `;
+
+  // Wire up actions
+  const ctaBtn = document.getElementById('hsViewFull');
+  if (ctaBtn) {
+    ctaBtn.addEventListener('click', () => {
+      onBeachSelect(beach);
+    });
+  }
+  const changeBtn = document.getElementById('hsClearHome');
+  if (changeBtn) {
+    changeBtn.addEventListener('click', () => {
+      try { localStorage.removeItem('seaforecast-last-beach'); } catch (e) {}
+      selectedBeachId = null;
+      renderHomeSummary();
+      // Scroll user to the map to pick a new home beach
+      const mapEl = document.querySelector('.map-card');
+      if (mapEl) mapEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+  const sportBtn = document.getElementById('hsChangeSport');
+  if (sportBtn) {
+    sportBtn.addEventListener('click', () => {
+      // Scroll to the sport selector in the hero so the user can pick another
+      const selector = document.getElementById('sportSelector');
+      if (selector) {
+        selector.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Brief highlight pulse so the user notices the selector
+        selector.classList.add('sport-selector--pulse');
+        setTimeout(() => selector.classList.remove('sport-selector--pulse'), 1400);
+      }
+    });
+  }
 }
 
 /* =========================================================
