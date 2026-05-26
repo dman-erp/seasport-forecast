@@ -900,6 +900,51 @@
     box-shadow: 0 2px 6px rgba(0,0,0,0.08);
   }
 
+  /* Beach filter bar */
+  .beach-filter {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .beach-filter .filter-icon {
+    font-size: 1.1rem;
+    color: var(--ink-soft, #475569);
+  }
+  .beach-select, .region-select {
+    flex: 1;
+    min-width: 140px;
+    padding: 8px 12px;
+    background: white;
+    border: 1px solid rgba(15, 76, 92, 0.15);
+    border-radius: 10px;
+    font-family: 'Heebo', sans-serif;
+    font-size: 0.9rem;
+    color: #0F4C5C;
+    cursor: pointer;
+    direction: rtl;
+    transition: all 0.2s;
+  }
+  .beach-select:hover, .region-select:hover {
+    border-color: #4FA8C7;
+    box-shadow: 0 2px 8px rgba(15, 76, 92, 0.08);
+  }
+  .beach-select:focus, .region-select:focus {
+    outline: none;
+    border-color: #1F6F8B;
+    box-shadow: 0 0 0 3px rgba(31, 111, 139, 0.15);
+  }
+  .sr-only {
+    position: absolute !important;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+  }
+
   .leaflet-container {
     width: 100%;
     height: 70vh;
@@ -1383,12 +1428,73 @@
     font-weight: 900 !important;
   }
 
+  /* === Info button (ⓘ) inline in section titles === */
+  .info-btn {
+    background: rgba(127, 200, 224, 0.2);
+    border: 1px solid rgba(31, 111, 139, 0.3);
+    color: #1F6F8B;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 700;
+    line-height: 1;
+    padding: 0;
+    margin-right: 8px;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .info-btn:hover {
+    background: #1F6F8B;
+    color: white;
+  }
+  .link-btn {
+    background: none;
+    border: none;
+    color: #1F6F8B;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+    font: inherit;
+  }
+  .link-btn:hover { color: #0F4C5C; }
+
+  /* === Offshore explanation note === */
+  .offshore-note {
+    background: linear-gradient(135deg, rgba(127, 200, 224, 0.12), rgba(232, 181, 71, 0.08));
+    border: 1px solid rgba(31, 111, 139, 0.18);
+    border-right: 3px solid #1F6F8B;
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 22px;
+    font-size: 0.85rem;
+    color: var(--ink-soft, #475569);
+    line-height: 1.5;
+  }
+  .offshore-note strong { color: #0F4C5C; }
+
   /* === Current state metrics — V3 enhanced === */
   .current-grid {
     display: grid !important;
-    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)) !important;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important;
     gap: 12px !important;
-    margin-bottom: 24px !important;
+    margin-bottom: 14px !important;
+  }
+  .current-grid .metric .m-sub {
+    margin-top: 6px;
+    font-size: 0.7rem;
+    color: var(--ink-soft, #475569);
+    opacity: 0.85;
+    direction: rtl;
+    line-height: 1.3;
+    padding-top: 6px;
+    border-top: 1px dashed rgba(15, 76, 92, 0.12);
+  }
+  .current-grid .metric .m-sub strong {
+    color: #1F6F8B;
+    direction: ltr;
+    display: inline-block;
   }
   .current-grid .metric {
     background: white !important;
@@ -3743,6 +3849,24 @@
       </div>
     </div>
 
+    <!-- Beach filter / quick selector -->
+    <div class="beach-filter">
+      <span class="filter-icon" aria-hidden="true">🔎</span>
+      <label for="regionFilter" class="sr-only">סינון לפי אזור</label>
+      <select id="regionFilter" class="region-select">
+        <option value="all">כל האזורים</option>
+        <option value="north">צפון (נהריה — חיפה)</option>
+        <option value="center">מרכז (קיסריה — בת ים)</option>
+        <option value="south">דרום (פלמחים — זיקים)</option>
+        <option value="eilat">אילת</option>
+        <option value="lake">כינרת</option>
+      </select>
+      <label for="beachQuickSelect" class="sr-only">בחירת חוף</label>
+      <select id="beachQuickSelect" class="beach-select">
+        <option value="">— בחר חוף —</option>
+      </select>
+    </div>
+
     <!-- Real Leaflet map -->
     <div id="leafletMap" class="leaflet-container"></div>
 
@@ -3990,6 +4114,50 @@
   </div>
 </footer>
 
+<!-- Offshore vs Beach explanation modal -->
+<div class="modal-backdrop" id="offshoreModal" hidden>
+  <div class="modal-content modal-wide">
+    <div class="modal-header">
+      <h2 id="offshoreTitle">🌊 ים פתוח vs בחוף — מה ההבדל?</h2>
+      <button class="close-btn" id="closeOffshore">✕</button>
+    </div>
+    <div class="modal-body" style="line-height:1.8;">
+      <p><strong>למה אנחנו מציגים שני ערכים שונים?</strong></p>
+      <p>מודלים מטאורולוגיים חוזים את גובה הגלים <strong>בים הפתוח</strong>, במרחק 10-25 ק"מ מהחוף, היכן שעומק המים גדול (50+ מטר). אבל הגל שאתה רואה בחוף הוא <strong>שונה</strong>.</p>
+
+      <h3 style="color:#0F4C5C; margin-top:18px;">למה הגל בחוף קטן יותר?</h3>
+      <p>בדרך מהים הפתוח לחוף, הגל עובר ארבעה תהליכים פיזיקליים:</p>
+      <ul>
+        <li><strong>Shoaling</strong> — כשהמים מתרדדים הגל מתקצר ומתחזק עד נקודת השבירה</li>
+        <li><strong>Refraction</strong> — הגל מתעקם להגיע מקביל לחוף</li>
+        <li><strong>Breaking</strong> — הגל שובר כשהיחס גובה/עומק עובר 0.78</li>
+        <li><strong>Coastline geometry</strong> — מפרצים, מזחים וצוקים חוסמים גלים</li>
+      </ul>
+
+      <h3 style="color:#0F4C5C; margin-top:18px;">איך אנחנו מחשבים?</h3>
+      <p>לכל חוף הגדרנו <strong>מקדם טרנספורמציה</strong> המבוסס על:</p>
+      <ul>
+        <li>מבנה החוף (פתוח / מפרץ / סגור)</li>
+        <li>נוכחות מזחים, צוקים או שוברי גלים</li>
+        <li>אופי קרקעית הים</li>
+        <li>חוויית גולשים מקומיים</li>
+      </ul>
+      <p><strong>דוגמאות בישראל:</strong></p>
+      <ul>
+        <li>🌊 <strong>פלמחים, חוף הצוק</strong> — חופים פתוחים, ~90% מהגל הפתוח</li>
+        <li>🏖️ <strong>תל אביב, נתניה</strong> — חופים טיפוסיים, ~85%</li>
+        <li>🪨 <strong>קיסריה</strong> — מזחים רומיים שוברים את הסוויל, ~70%</li>
+        <li>🏗️ <strong>אשדוד</strong> — שוברי הגלים של הנמל, ~72%</li>
+        <li>⛵ <strong>חיפה</strong> — מפרץ סגור, ~50% מהגל הפתוח</li>
+      </ul>
+
+      <h3 style="color:#0F4C5C; margin-top:18px;">איך אני יודע מה לסמוך עליו?</h3>
+      <p>ה<strong>"בחוף"</strong> הוא ההערכה הקרובה ביותר למה שתחווה בפועל — וזה הערך שהציון בנוי עליו. ה<strong>"בים פתוח"</strong> הוא הנתון הגולמי שמסביר תנאי האזור הרחב יותר.</p>
+      <p>💡 <strong>בעתיד:</strong> נחבר את האפליקציה לבויית IOLR שמודדת את הגל בפועל לאורך החוף, לכיול בדיוק מקסימלי.</p>
+    </div>
+  </div>
+</div>
+
 <!-- Legal Modal (Terms / Privacy / Copyright) -->
 <div class="modal-backdrop" id="legalModal" hidden>
   <div class="modal-content modal-wide">
@@ -4179,6 +4347,96 @@ function isBeachRelevantForSport(beach, sportId) {
     return false;
   }
   return true;
+}
+
+/* =========================================================
+   Coastal transformation factors
+   The Open-Meteo Marine API returns wave data for a grid point
+   ~10-25km offshore (open sea). The actual wave at the beach
+   is typically smaller due to shoaling, refraction, breaking,
+   and coastline geometry. Wind also gets dampened by coastal
+   friction.
+
+   Factors below are realistic estimates per beach type:
+   - waveTransform: ratio of nearshore Hs to open-sea Hs (0..1)
+   - windDamping:   ratio of coastal wind to open-water wind (0..1)
+
+   Estimates based on Israeli coast research and typical surf
+   spot characteristics.
+   ========================================================= */
+const COASTAL_FACTORS = {
+  // North coast — open, exposed to NW swells
+  'achziv':    { waveTransform: 0.85, windDamping: 0.92 },
+  'nahariya':  { waveTransform: 0.85, windDamping: 0.92 },
+  'shavei':    { waveTransform: 0.85, windDamping: 0.92 },
+
+  // Haifa Bay — deeply sheltered from NW swell
+  'haifa':     { waveTransform: 0.50, windDamping: 0.82 },
+
+  // Carmel coast — open, exposed
+  'atlit':     { waveTransform: 0.82, windDamping: 0.90 },
+  'dor':       { waveTransform: 0.85, windDamping: 0.92 },
+
+  // Caesarea — partial shelter from breakwaters and reefs
+  'caesarea':  { waveTransform: 0.70, windDamping: 0.88 },
+
+  // Central coast — open, sandy
+  'olga':      { waveTransform: 0.85, windDamping: 0.92 },
+  'beityanai': { waveTransform: 0.88, windDamping: 0.92 },
+  'michmoret': { waveTransform: 0.85, windDamping: 0.92 },
+  'netanya':   { waveTransform: 0.83, windDamping: 0.90 },
+  'herzliya':  { waveTransform: 0.85, windDamping: 0.92 },
+  'tzuk':      { waveTransform: 0.90, windDamping: 0.92 },  // exposed point
+  'telaviv':   { waveTransform: 0.85, windDamping: 0.90 },
+  'batyam':    { waveTransform: 0.82, windDamping: 0.90 },
+  'palmahim':  { waveTransform: 0.90, windDamping: 0.93 },  // very open
+
+  // South coast — partial shelter from port structures
+  'ashdod':    { waveTransform: 0.72, windDamping: 0.88 },  // port breakwaters
+  'ashkelon':  { waveTransform: 0.80, windDamping: 0.90 },
+  'zikim':     { waveTransform: 0.88, windDamping: 0.93 },  // open
+
+  // Red Sea / Kinneret — wave data is already synthetic (no transform needed)
+  'eilat':     { waveTransform: 1.00, windDamping: 0.92 },
+  'shikmim':   { waveTransform: 1.00, windDamping: 0.95 },
+  'ginosar':   { waveTransform: 1.00, windDamping: 0.95 },
+  'gofra':     { waveTransform: 1.00, windDamping: 0.95 },
+  'haon':      { waveTransform: 1.00, windDamping: 0.95 },
+  'tzemach':   { waveTransform: 1.00, windDamping: 0.95 },
+};
+
+function getCoastalFactor(beach) {
+  return COASTAL_FACTORS[beach.id] || { waveTransform: 0.85, windDamping: 0.92 };
+}
+
+// Regional grouping for the filter dropdown
+const BEACH_REGIONS = {
+  'north':  ['achziv','nahariya','shavei','haifa'],
+  'center': ['atlit','dor','caesarea','olga','beityanai','michmoret','netanya','herzliya','tzuk','telaviv','batyam'],
+  'south':  ['palmahim','ashdod','ashkelon','zikim'],
+  'eilat':  ['eilat'],
+  'lake':   ['shikmim','ginosar','gofra','haon','tzemach'],
+};
+function getBeachRegion(beachId) {
+  for (const [region, ids] of Object.entries(BEACH_REGIONS)) {
+    if (ids.includes(beachId)) return region;
+  }
+  return 'unknown';
+}
+
+// Returns conditions transformed from open-sea values to at-beach estimates.
+// Period and direction are NOT transformed — they don't change much during shoaling.
+function applyCoastalTransform(rawConditions, beach) {
+  if (!rawConditions) return rawConditions;
+  const f = getCoastalFactor(beach);
+  return {
+    ...rawConditions,
+    waveHeight: rawConditions.waveHeight != null ? rawConditions.waveHeight * f.waveTransform : null,
+    waveMax:    rawConditions.waveMax    != null ? rawConditions.waveMax    * f.waveTransform : null,
+    windSpeed:  rawConditions.windSpeed  != null ? rawConditions.windSpeed  * f.windDamping   : null,
+    windMax:    rawConditions.windMax    != null ? rawConditions.windMax    * f.windDamping   : null,
+    windGusts:  rawConditions.windGusts  != null ? rawConditions.windGusts  * f.windDamping   : null,
+  };
 }
 
 /* =========================================================
@@ -4619,11 +4877,29 @@ const SPORTS = {
   }
 };
 
-let currentSport = 'windsurf';
+// Restore last-used sport from localStorage (default: windsurf)
+let currentSport = (function() {
+  try {
+    const saved = localStorage.getItem('seaforecast-last-sport');
+    if (saved && ['surf','kite','windsurf','wing','sup'].includes(saved)) return saved;
+  } catch (e) {}
+  return 'windsurf';
+})();
 let selectedBeachId = null;
 let openDayIdx = null;
 let hoveredBeachId = null;
 const dataCache = new Map();
+
+// Save preferences for next visit
+function saveLastSport(id) {
+  try { localStorage.setItem('seaforecast-last-sport', id); } catch (e) {}
+}
+function saveLastBeach(id) {
+  try { localStorage.setItem('seaforecast-last-beach', id); } catch (e) {}
+}
+function getLastBeach() {
+  try { return localStorage.getItem('seaforecast-last-beach'); } catch (e) { return null; }
+}
 
 /* =========================================================
    Beach cameras - public/community webcams per beach.
@@ -4994,6 +5270,7 @@ function buildSportSelector() {
     btn.innerHTML = `<span class="icon" aria-hidden="true">${sport.icon}</span><span>${sport.name}</span>`;
     btn.addEventListener('click', () => {
       currentSport = id;
+      saveLastSport(id);
       trackEvent('sport_changed', { sport: id });
       if (typeof updateHeroMood === 'function') updateHeroMood();
       document.querySelectorAll('.sport-btn').forEach(b => {
@@ -5004,6 +5281,9 @@ function buildSportSelector() {
       applySportVisibility();
       refreshAllDotColors();
       renderTopBeaches();
+      if (typeof window.__rebuildBeachListOnSport === 'function') {
+        window.__rebuildBeachListOnSport();
+      }
       if (selectedBeachId) {
         const beach = BEACHES.find(b => b.id === selectedBeachId);
         renderBeachInfo(beach);
@@ -5419,6 +5699,7 @@ function renderTooltipFromData(beach, data) {
    ========================================================= */
 async function onBeachSelect(beach) {
   selectedBeachId = beach.id;
+  saveLastBeach(beach.id);
   openDayIdx = null;
   // Refresh leaflet markers so the selected one gets the "selected" class
   refreshAllDotColors();
@@ -5454,10 +5735,14 @@ async function renderBeachInfo(beach) {
   }
 
   const sport = SPORTS[currentSport];
-  const result = calculateScore(data.current, beach, currentSport);
+  // Use coastal-transformed conditions for scoring — that's what surfers
+  // actually experience. The raw open-sea data is shown separately for
+  // transparency (see "מצב נוכחי" section).
+  const cBeach = applyCoastalTransform(data.current, beach);
+  const result = calculateScore(cBeach, beach, currentSport);
   const score = result?.total ?? null;
   const breakdown = result?.breakdown ?? [];
-  const c = data.current;
+  const c = data.current; // raw open-sea data (still used for compass directions)
 
   const dot = document.querySelector(`.beach-dot[data-id="${beach.id}"]`);
   if (dot) dot.setAttribute('fill', scoreColor(score));
@@ -5505,7 +5790,7 @@ async function renderBeachInfo(beach) {
       <div class="score-msg" style="font-size:0.78rem; opacity:0.85;">${sport.desc}</div>
     </div>
 
-    <details class="breakdown-card" open>
+    <details class="breakdown-card">
       <summary>🧮 פירוט החישוב — איך הגענו לציון ${score ?? '—'}?</summary>
       <div class="brk-grid">
         ${breakdownHtml}
@@ -5516,14 +5801,35 @@ async function renderBeachInfo(beach) {
       </div>
     </details>
 
-    <h3 class="section-title">מצב נוכחי</h3>
+    <h3 class="section-title">
+      מצב נוכחי
+      <button class="info-btn" type="button" id="openOffshoreInfo" aria-label="מה ההבדל בין ים פתוח לחוף?">ⓘ</button>
+    </h3>
     <div class="current-grid">
-      <div class="metric"><div class="m-icon">🌊</div><div class="label">גובה גלים</div><div class="val">${fmt(c.waveHeight)}<span class="unit">מ׳</span></div></div>
-      <div class="metric"><div class="m-icon">⏱️</div><div class="label">תקופת גלים</div><div class="val">${fmt(c.wavePeriod, 0)}<span class="unit">שנ׳</span></div></div>
-      <div class="metric"><div class="m-icon">💨</div><div class="label">מהירות רוח</div><div class="val">${fmt(c.windSpeed, 0)}<span class="unit">קשר</span></div></div>
-      <div class="metric"><div class="m-icon">🌪️</div><div class="label">משבי רוח</div><div class="val">${fmt(c.windGusts, 0)}<span class="unit">קשר</span></div></div>
-      <div class="metric"><div class="m-icon">🌡️</div><div class="label">טמפ׳ מים</div><div class="val">${fmt(c.seaTemp)}<span class="unit">°C</span></div></div>
-      <div class="metric"><div class="m-icon">☀️</div><div class="label">טמפ׳ אוויר</div><div class="val">${fmt(c.airTemp, 0)}<span class="unit">°C</span></div></div>
+      <div class="metric"><div class="m-icon">🌊</div><div class="label">גובה גלים</div>
+        <div class="val">${fmt(cBeach.waveHeight)}<span class="unit">מ׳</span></div>
+        <div class="m-sub">ים פתוח: <strong>${fmt(c.waveHeight)} מ׳</strong></div>
+      </div>
+      <div class="metric"><div class="m-icon">⏱️</div><div class="label">תקופת גלים</div>
+        <div class="val">${fmt(c.wavePeriod, 0)}<span class="unit">שנ׳</span></div>
+      </div>
+      <div class="metric"><div class="m-icon">💨</div><div class="label">מהירות רוח</div>
+        <div class="val">${fmt(cBeach.windSpeed, 0)}<span class="unit">קשר</span></div>
+        <div class="m-sub">ים פתוח: <strong>${fmt(c.windSpeed, 0)} קשר</strong></div>
+      </div>
+      <div class="metric"><div class="m-icon">🌪️</div><div class="label">משבי רוח</div>
+        <div class="val">${fmt(cBeach.windGusts, 0)}<span class="unit">קשר</span></div>
+        <div class="m-sub">ים פתוח: <strong>${fmt(c.windGusts, 0)} קשר</strong></div>
+      </div>
+      <div class="metric"><div class="m-icon">🌡️</div><div class="label">טמפ׳ מים</div>
+        <div class="val">${fmt(c.seaTemp)}<span class="unit">°C</span></div>
+      </div>
+      <div class="metric"><div class="m-icon">☀️</div><div class="label">טמפ׳ אוויר</div>
+        <div class="val">${fmt(c.airTemp, 0)}<span class="unit">°C</span></div>
+      </div>
+    </div>
+    <div class="offshore-note">
+      📍 הערכים המוצגים הם <strong>בחוף ${beach.name}</strong> (משוערים לפי מאפייני המקום). הערכים בים הפתוח גדולים יותר בכ-${Math.round((1 - (COASTAL_FACTORS[beach.id]?.waveTransform || 0.85)) * 100)}%. <button type="button" class="link-btn" id="openOffshoreInfo2">מה זה אומר?</button>
     </div>
 
     <div class="compass-row">
@@ -6122,7 +6428,20 @@ async function preloadAll() {
   applySportVisibility();
   refreshAllDotColors();
   renderTopBeaches();
-  renderSmartEmpty();
+
+  // Restore last-selected beach from previous visit (if any)
+  const lastBeachId = getLastBeach();
+  if (lastBeachId) {
+    const beach = BEACHES.find(b => b.id === lastBeachId);
+    if (beach && isBeachRelevantForSport(beach, currentSport)) {
+      await onBeachSelect(beach);
+    } else {
+      renderSmartEmpty();
+    }
+  } else {
+    renderSmartEmpty();
+  }
+
   document.getElementById('lastUpdate').textContent =
     'Data updated: ' + new Date().toLocaleString('he-IL');
 }
@@ -7237,6 +7556,83 @@ if (copyYearEl) copyYearEl.textContent = new Date().getFullYear();
 trackEvent('page_view', { url: window.location.pathname });
 
 /* =========================================================
+   Beach quick-selector + region filter (above the map)
+   ========================================================= */
+function setupBeachFilter() {
+  const beachSel = document.getElementById('beachQuickSelect');
+  const regionSel = document.getElementById('regionFilter');
+  if (!beachSel || !regionSel) return;
+
+  function rebuildBeachList() {
+    const region = regionSel.value;
+    const filtered = BEACHES.filter(b => {
+      if (!isBeachRelevantForSport(b, currentSport)) return false;
+      if (region === 'all') return true;
+      return getBeachRegion(b.id) === region;
+    });
+
+    beachSel.innerHTML = '<option value="">— בחר חוף או סנן ברשימה —</option>' +
+      filtered.map(b => `<option value="${b.id}" ${b.id === selectedBeachId ? 'selected' : ''}>${b.name}</option>`).join('');
+  }
+
+  beachSel.addEventListener('change', () => {
+    const id = beachSel.value;
+    if (!id) return;
+    const beach = BEACHES.find(b => b.id === id);
+    if (beach) onBeachSelect(beach);
+  });
+
+  regionSel.addEventListener('change', () => {
+    rebuildBeachList();
+    // Pan map to fit region beaches
+    const region = regionSel.value;
+    if (region !== 'all' && leafletMap) {
+      const ids = BEACH_REGIONS[region] || [];
+      const markers = ids.map(id => beachMarkers[id]).filter(Boolean);
+      if (markers.length > 0) {
+        const group = L.featureGroup(markers);
+        leafletMap.fitBounds(group.getBounds().pad(0.25));
+      }
+    }
+  });
+
+  rebuildBeachList();
+
+  // Refresh list when sport changes
+  const origBuildSportSelector = window.__rebuildBeachListOnSport;
+  window.__rebuildBeachListOnSport = rebuildBeachList;
+}
+
+/* =========================================================
+   Offshore vs Beach explanation modal — opens via info buttons
+   ========================================================= */
+(function setupOffshoreModal() {
+  const modal = document.getElementById('offshoreModal');
+  if (!modal) return;
+  const closeBtn = document.getElementById('closeOffshore');
+  function open() {
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+    trackEvent('offshore_info_viewed');
+  }
+  function close() {
+    modal.hidden = true;
+    document.body.style.overflow = '';
+  }
+  // Delegated listener — info buttons may be rendered dynamically
+  document.addEventListener('click', (e) => {
+    if (e.target.matches('#openOffshoreInfo, #openOffshoreInfo2')) {
+      e.preventDefault();
+      open();
+    }
+  });
+  if (closeBtn) closeBtn.addEventListener('click', close);
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) close();
+  });
+})();
+
+/* =========================================================
    V3 — Dynamic hero: changes mood by time of day + sport
    ========================================================= */
 function getTimeOfDay() {
@@ -7311,6 +7707,7 @@ renderTopBeaches = function() {
 setupThemeToggle();
 buildSportSelector();
 buildMap();
+setupBeachFilter();
 // buildBuoys() removed — buoy links removed per user request
 setupMatchFinder();
 setupGlossary();
